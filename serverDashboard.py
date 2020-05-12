@@ -1,5 +1,6 @@
 # TO DO
-# parse data from server to variables
+# - parse data from server to variables
+# - pull last line from folding file
 
 from pexpect import pxssh
 from functions import *
@@ -18,6 +19,7 @@ except:
 # data to pull from local data file
 elder_user = ""
 elder_pass = "" 
+elder_ip = ""
 count = 0 # needed for file parser
 
 for i in config:
@@ -25,19 +27,26 @@ for i in config:
                 elder_user = fileParse("elder_user", config, count)
     if elder_pass == "":
                 elder_pass = fileParse("elder_pass", config, count)
+    if elder_ip == "":
+                elder_ip = fileParse("elder_ip", config, count)
     count = count + 1
 
 
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
-elder = pxssh.pxssh()
-if not elder.login ('192.168.0.24', elder_user, elder_pass):
+elder = pxssh.pxssh() # connect to server 'elder'
+if not elder.login (elder_ip, elder_user, elder_pass):
     print ("SSH session failed on login.")
     print (str(elder))
-else:
-    print ("SSH session login successful")
-    elder.sendline ('df -h | grep Media')
-    elder.prompt()         # match the prompt
-    print(elder.before)     # print everything before the prompt.
-    elder.logout()
+    return 0
+
+print ("SSH session login successful")
+
+result = commandSend(elder, "df -h | grep root | awk ' {print $5}'")
+print('storage used / = ' + result)
+result = commandSend(elder, "df -h | grep /dev/sdb2 | awk ' {print $5}'")
+print('storage used External Drive = ' + result)
+
+
+elder.logout()
     
