@@ -1,13 +1,8 @@
+# TO DO
+# parse data from server to variables
+
 from pexpect import pxssh
-# Functions ----------------------------------------------------------------------------------------------------------------
-## pulls the data from a row in the config file
-def fileParse(dataToFind, fileVariable, index):
-    if dataToFind in fileVariable[index]:
-        tmp = fileVariable[index].split(": ")
-        length = len(tmp)
-        return tmp[length - 1]
-    else:
-        return ""
+from functions import *
 
 #load data from data file into variables -----------------------------------------------------------------------------------
 try:
@@ -41,7 +36,7 @@ if not elder.login ('192.168.0.24', elder_user, elder_pass):
     print (str(elder))
 else:
     print ("SSH session login successful")
-    elder.sendline ('uptime ; df -h')
+    elder.sendline ('df -h | grep Media')
     elder.prompt()         # match the prompt
     print(elder.before)     # print everything before the prompt.
     elder.logout()
