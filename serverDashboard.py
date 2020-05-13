@@ -9,9 +9,9 @@
 # - encrypt data file
 
 
-from pexpect import pxssh   # used for ssh connection
-from functions import *     # import all functions written for this program
-import sys, time, os        # other libraries
+from pexpect import pxssh       # used for ssh connection
+from functions import *         # import all functions written for this program
+import sys, time, os, threading # other libraries
 
 # Attempt to import server data from file if it exists
 try:
@@ -32,31 +32,50 @@ if not server1.login (server1_ip, server1_user, server1_pass):
 
 print ("SSH session login successful")
 
+# create interrupt thread --------------------------------------------------------------------------------------------------
+# needed for the interrupt thread
+flag = 1
+
+# function that looks for keyboard press in the background
+def get_input():
+    global flag
+    keystrk=input()
+    # thread doesn't continue until key is pressed
+    flag=False
+    print('Exiting...')
+
+# set this funciton as the var interrupt
+interrupt = threading.Thread(target=get_input)
+
+# main display region ------------------------------------------------------------------------------------------------------
+
 # pull data that doesn't need to be constantly updated
 storage1 = commandSend(server1, "df -h | grep root | awk ' {print $5}'")
-# print('storage used / = ' + result)
 storage2 = commandSend(server1, "df -h | grep /dev/sdb2 | awk ' {print $5}'")
-# print('storage used External Drive = ' + result)
-print("")
 
-
-server1.sendline("sudo apt update| grep packages | awk '{ print $1" " $2 " " $3 " " $4 " " $5}'")
-server1.sendline(server1_pass)
-server1.prompt()
-test =  sshParse(str(server1.before))
-
-
-
+# start the interrupt thread
+interrupt.start()
 # clear terminal screen and start to display data
-for i in range (10):
+while flag == 1:
     os.system('clear')
-    print(test)
-    print("Server: server1")
+    print('Server Information: Elder')
+    print(commandSend(server1, 'uptime'))
+    print("")
+    print("Storage:")
     print('storage used / = ' + storage1)
     print('storage used External Drive = ' + storage2)
+    print("")
+    print("Folding Status:")
     print(commandSend(server1, 'tail -1 /var/lib/fahclient/log.txt'))
+    print("")
+    print("Press ENTER to exit...")
     time.sleep(5)
 
 
 server1.logout()
-    
+
+# This is the start of looking to see how many updates are availiable for an ubuntu server
+# server1.sendline("sudo apt update| grep packages | awk '{ print $1" " $2 " " $3 " " $4 " " $5}'")
+# server1.sendline(server1_pass)
+# server1.prompt()
+# test =  sshParse(str(server1.before))

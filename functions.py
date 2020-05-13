@@ -1,4 +1,5 @@
 # Functions ----------------------------------------------------------------------------------------------------------------
+global flag
 ## pulls the data from a row in the config file
 def fileParse(dataToFind, fileVariable, index):
     if dataToFind in fileVariable[index]:
@@ -21,4 +22,18 @@ def commandSend(server, command):
 	server.prompt()
 	return sshParse(str(server.before))
 
-    
+def get_input():
+    global flag
+    keystrk=input('Press a key \n')
+    # thread doesn't continue until key is pressed
+    print('You pressed: ', keystrk)
+    flag=False
+    print('flag is now:', flag)
+
+def serverStats():
+	global flag
+	while flag==1:
+	    print('normal stuff')
+	    time.sleep(2)
+	    if flag==False:
+	        print('The while loop is now closing')
