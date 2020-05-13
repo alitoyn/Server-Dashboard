@@ -17,7 +17,7 @@ def sshParse(string):
 # takes the ssh server connection and a command and returns the result
 # DEPENDANT ON sshParse function
 def commandSend(server, command):
-	server.sendline (command)
+	server.sendline(command)
 	server.prompt()
 	return sshParse(str(server.before))
 
