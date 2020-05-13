@@ -22,18 +22,7 @@ def commandSend(server, command):
 	server.prompt()
 	return sshParse(str(server.before))
 
-def get_input():
-    global flag
-    keystrk=input('Press a key \n')
-    # thread doesn't continue until key is pressed
-    print('You pressed: ', keystrk)
-    flag=False
-    print('flag is now:', flag)
-
-def serverStats():
-	global flag
-	while flag==1:
-	    print('normal stuff')
-	    time.sleep(2)
-	    if flag==False:
-	        print('The while loop is now closing')
+# this splits by : and dispalys the last string in the list
+def foldingParse(data):
+	data = data.split(":")
+	return(str(data[len(data) - 1]))

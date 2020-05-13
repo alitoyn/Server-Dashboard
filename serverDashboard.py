@@ -37,15 +37,12 @@ print ("SSH session login successful")
 flag = 1
 
 # function that looks for keyboard press in the background
-def get_input():
+def interrupt(message):
     global flag
     keystrk=input()
     # thread doesn't continue until key is pressed
     flag=False
-    print('Exiting...')
-
-# set this funciton as the var interrupt
-interrupt = threading.Thread(target=get_input)
+    print(message)
 
 # main display region ------------------------------------------------------------------------------------------------------
 
@@ -54,19 +51,21 @@ storage1 = commandSend(server1, "df -h | grep root | awk ' {print $5}'")
 storage2 = commandSend(server1, "df -h | grep /dev/sdb2 | awk ' {print $5}'")
 
 # start the interrupt thread
-interrupt.start()
+inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing comma on args is important!
+inter.start()
+
 # clear terminal screen and start to display data
 while flag == 1:
     os.system('clear')
-    print('Server Information: Elder')
+    print('Server Information: ' + server1_name)
     print(commandSend(server1, 'uptime'))
     print("")
-    print("Storage:")
-    print('storage used / = ' + storage1)
-    print('storage used External Drive = ' + storage2)
+    print(" Storage:")
+    print(' storage used / = ' + storage1)
+    print(' storage used External Drive = ' + storage2)
     print("")
-    print("Folding Status:")
-    print(commandSend(server1, 'tail -1 /var/lib/fahclient/log.txt'))
+    print(" Folding Status:")
+    print(" " + foldingParse(commandSend(server1, 'tail -1 /var/lib/fahclient/log.txt')))
     print("")
     print("Press ENTER to exit...")
     time.sleep(5)
