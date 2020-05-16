@@ -11,7 +11,8 @@
 
 from pexpect import pxssh       # used for ssh connection
 from functions import *         # import all functions written for this program
-import sys, time, os, threading # other libraries
+import sys, time, os, threading, getch # other libraries
+from termcolor import colored, cprint
 
 # Attempt to import server data from file if it exists
 try:
@@ -34,14 +35,14 @@ print ("SSH session login successful")
 
 # create interrupt thread --------------------------------------------------------------------------------------------------
 # needed for the interrupt thread
-flag = 1
+flag = -1
 
 # function that looks for keyboard press in the background
 def interrupt(message):
     global flag
     keystrk=input()
     # thread doesn't continue until key is pressed
-    flag=False
+    flag=keystrk
     print(message)
 
 # main display region ------------------------------------------------------------------------------------------------------
@@ -55,7 +56,7 @@ inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing 
 inter.start()
 
 # clear terminal screen and start to display data
-while flag == 1:
+while flag == -1:
     os.system('clear')
     print('Server Information: ' + server1_name)
     print(commandSend(server1, 'uptime'))
@@ -67,10 +68,17 @@ while flag == 1:
     print(" Folding Status:")
     print(" " + foldingParse(commandSend(server1, 'tail -1 /var/lib/fahclient/log.txt')))
     print("")
+    print("Options:")
+    print("1: Server Select. 2: Folding Details")
     print("Press ENTER to exit...")
-    time.sleep(5)
+    
+    # break from loop if user selects an option
+    for i in range(0, 10):
+        time.sleep(0.5)
+        if flag != -1:
+            break
 
-
+print("The flag is: " + flag)
 server1.logout()
 
 # This is the start of looking to see how many updates are availiable for an ubuntu server
@@ -78,3 +86,14 @@ server1.logout()
 # server1.sendline(server1_pass)
 # server1.prompt()
 # test =  sshParse(str(server1.before))
+
+# This is how to print in colour for later
+# print(colored('Press ENTER to exit...', 'white', 'on_green'))
+
+# not an easy fix, needs some work, doesn't let the thread stay in the background
+# this is for getting characters without using enter
+# import getch
+# # ...
+# char = getch.getch() # User input, but not displayed on the screen
+# # or
+# char = getch.getche() # also displayed on the screen
