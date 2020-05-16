@@ -26,3 +26,12 @@ def commandSend(server, command):
 def foldingParse(data):
 	data = data.split(":")
 	return(str(data[len(data) - 1]))
+
+def getFoldingData(id):
+		import requests
+
+		URL = "https://folding.extremeoverclocking.com/xml/user_summary.php?u=" + str(id)
+		return URL
+		response = requests.get(str(URL))
+		with open('folding.xml', 'wb') as file:
+			file.write(response.content)

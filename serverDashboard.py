@@ -23,6 +23,9 @@ except ImportError:
     print("Confirm the file 'local_data.py' exists...")
     sys.exit(0)
 
+#tmpF = getFoldingData(986350)
+
+
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
 server1 = pxssh.pxssh() # connect to server 'server1'
@@ -35,7 +38,7 @@ print ("SSH session login successful")
 
 # create interrupt thread --------------------------------------------------------------------------------------------------
 # needed for the interrupt thread
-flag = -1
+flag = "0"
 
 # function that looks for keyboard press in the background
 def interrupt(message):
@@ -47,36 +50,49 @@ def interrupt(message):
 
 # main display region ------------------------------------------------------------------------------------------------------
 
-# pull data that doesn't need to be constantly updated
-storage1 = commandSend(server1, "df -h | grep root | awk ' {print $5}'")
-storage2 = commandSend(server1, "df -h | grep /dev/sdb2 | awk ' {print $5}'")
+while flag != "-1":
+    if flag == "0":
+        # pull data that doesn't need to be constantly updated
+        storage1 = commandSend(server1, "df -h | grep root | awk ' {print $5}'")
+        storage2 = commandSend(server1, "df -h | grep /dev/sdb2 | awk ' {print $5}'")
 
-# start the interrupt thread
-inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing comma on args is important!
-inter.start()
+        # start the interrupt thread
+        inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing comma on args is important!
+        inter.start()
 
-# clear terminal screen and start to display data
-while flag == -1:
-    os.system('clear')
-    print('Server Information: ' + server1_name)
-    print(commandSend(server1, 'uptime'))
-    print("")
-    print(" Storage:")
-    print(' storage used / = ' + storage1)
-    print(' storage used External Drive = ' + storage2)
-    print("")
-    print(" Folding Status:")
-    print(" " + foldingParse(commandSend(server1, 'tail -1 /var/lib/fahclient/log.txt')))
-    print("")
-    print("Options:")
-    print("1: Server Select. 2: Folding Details")
-    print("Press ENTER to exit...")
-    
-    # break from loop if user selects an option
-    for i in range(0, 10):
-        time.sleep(0.5)
-        if flag != -1:
-            break
+        # clear terminal screen and start to display data
+        while flag == "0":
+            os.system('clear')
+            print('Server Information: ' + server1_name)
+            print(commandSend(server1, 'uptime'))
+            print("")
+            print(" Storage:")
+            print(' storage used / = ' + storage1)
+            print(' storage used External Drive = ' + storage2)
+            print("")
+            print(" Folding Status:")
+            print(" " + foldingParse(commandSend(server1, 'tail -1 /var/lib/fahclient/log.txt')))
+            print("")
+            print("Options:")
+            print("1: Server Select. 2: Folding Details")
+            print("Press ENTER to exit...")
+            
+            # break from loop if user selects an option
+            # this will loop for 5 seconds before repeating the loop
+            for i in range(0, 10):
+                time.sleep(0.5)
+                if flag != "0":
+                    break
+
+    if flag == "2":
+        inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing comma on args is important!
+        inter.start()
+        while flag == "2":
+            print("this is the folding page")
+            for i in range(0, 10):
+                time.sleep(0.5)
+                if flag != "2":
+                    break
 
 print("The flag is: " + flag)
 server1.logout()
