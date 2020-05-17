@@ -1,3 +1,5 @@
+# Currently working on downloading folding file only once a day
+
 # TO DO - consider looking at pulseway for further ideas
 # - start by having a mode that displays one server,
 #   then the option to choose which one to look at
@@ -14,6 +16,8 @@ from functions import *         # import all functions written for this program
 import sys, time, os, threading, getch # other libraries
 from termcolor import colored, cprint
 
+# get config info ----------------------------------------------------------------------------------------------------------
+
 # Attempt to import server data from file if it exists
 try:
     from local_data import *
@@ -23,7 +27,9 @@ except ImportError:
     print("Confirm the file 'local_data.py' exists...")
     sys.exit(0)
 
-#tmpF = getFoldingData(986350)
+# get the most up to date folding data for the user
+getFoldingData(foldingUserID)
+
 
 
 # connect via ssh ----------------------------------------------------------------------------------------------------------
@@ -75,7 +81,7 @@ while flag != "-1":
             print("")
             print("Options:")
             print("1: Server Select. 2: Folding Details")
-            print("Press ENTER to exit...")
+            print("Enter -1 to exit...")
             
             # break from loop if user selects an option
             # this will loop for 5 seconds before repeating the loop
@@ -88,7 +94,9 @@ while flag != "-1":
         inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing comma on args is important!
         inter.start()
         while flag == "2":
+            os.system('clear')
             print("this is the folding page")
+            print("Enter -1 to exit...")
             for i in range(0, 10):
                 time.sleep(0.5)
                 if flag != "2":
