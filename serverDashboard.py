@@ -100,6 +100,13 @@ while flag != "q":
         while flag == "2":
             os.system('clear')
             print("User Name: ", fData.User_Name.get_text())
+            print("Rank Change (24hrs):", fData.user.Change_Rank_24hr.get_text())
+            print("")
+            print("Points Today:", fData.user.Points_Today.get_text())
+            print("")
+            print("Points Last 24hrs:", fData.user.Points_Last_24hr.get_text())
+            print("Points 24hrs Average:", fData.user.Points_24hr_Avg.get_text())
+            print("")
             print("0: Main Dashboard | 1: Server Select.")
             print("")
             print("Enter q to exit...")
