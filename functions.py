@@ -35,6 +35,7 @@ def getFoldingData(id):
 			for line in f:
 				pass
 			processedDay = line
+	# if the file doesn't exist then set the var as "0" to force file download
 	except:		
 		processedDay = "0"
 
@@ -51,11 +52,27 @@ def getFoldingData(id):
 	else:
 		print("Folding stats up to date")
 
+# parses the folding data xml file and returns a var holding the information
 def foldingXmlParse():
 	try:
+		# import beautiful soup - for parsing information
 		from bs4 import BeautifulSoup
+		# use BS to parse the data
 		with open("foldingStats.xml") as fp:
 			data = BeautifulSoup(fp, "xml")
+		# pass this data back to the main funciton
 		return data
 	except:		
 		print("Folding Stats data parse failed")
+
+def percentBar(symbol, percent, length):
+	data = round((percent/100) * length)
+	count = 0
+	print("[", end="")
+	for i in range(length):
+		if count < data:
+			print(symbol, end="")
+			count += 1
+		else:
+			print(".", end="")
+	print("]")
