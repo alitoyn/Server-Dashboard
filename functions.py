@@ -43,10 +43,19 @@ def getFoldingData(id):
 		print("Updating folding stats...")
 		# download folding data - this should be chnaged to be in python at some point
 		URL = "https://folding.extremeoverclocking.com/xml/user_summary.php?u=" + str(id)
-		cmd = "wget -q -o -O foldingStats.xml " + URL
+		cmd = "wget -q -O foldingStats.xml " + URL
 		os.system(cmd)
 		# append the day of the month to the end
 		with open("foldingStats.xml", "a") as myfile:
 			myfile.write(str(datetime.datetime.today().day))
 	else:
 		print("Folding stats up to date")
+
+def foldingXmlParse():
+	try:
+		from bs4 import BeautifulSoup
+		with open("foldingStats.xml") as fp:
+			data = BeautifulSoup(fp, "xml")
+		return data
+	except:		
+		print("Folding Stats data parse failed")

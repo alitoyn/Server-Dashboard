@@ -29,8 +29,7 @@ except ImportError:
 
 # get the most up to date folding data for the user
 getFoldingData(foldingUserID)
-
-
+fData = foldingXmlParse()
 
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
@@ -52,11 +51,14 @@ def interrupt(message):
     keystrk=input()
     # thread doesn't continue until key is pressed
     flag=keystrk
-    print(message)
+    if keystrk == "q":
+        print(message)
 
-# main display region ------------------------------------------------------------------------------------------------------
+# display region ------------------------------------------------------------------------------------------------------
 
-while flag != "-1":
+while flag != "q":
+    
+    # main page
     if flag == "0":
         # pull data that doesn't need to be constantly updated
         storage1 = commandSend(server1, "df -h | grep root | awk ' {print $5}'")
@@ -80,29 +82,37 @@ while flag != "-1":
             print(" " + foldingParse(commandSend(server1, 'tail -1 /var/lib/fahclient/log.txt')))
             print("")
             print("Options:")
-            print("1: Server Select. 2: Folding Details")
-            print("Enter -1 to exit...")
+            print("1: Server Select | 2: Folding Details")
+            print("")
+            print("Enter q to exit...")
             
             # break from loop if user selects an option
-            # this will loop for 5 seconds before repeating the loop
-            for i in range(0, 10):
+            # this will loop for 60 seconds before repeating the loop
+            for i in range(0, 120):
                 time.sleep(0.5)
                 if flag != "0":
                     break
 
+    # folding page                
     if flag == "2":
         inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing comma on args is important!
         inter.start()
         while flag == "2":
             os.system('clear')
-            print("this is the folding page")
-            print("Enter -1 to exit...")
-            for i in range(0, 10):
+            print("User Name: ", fData.User_Name.get_text())
+            print("0: Main Dashboard | 1: Server Select.")
+            print("")
+            print("Enter q to exit...")
+            
+            
+            # break from loop if user selects an option
+            # this will loop for 60 seconds before repeating the loop
+            for i in range(0, 120):
                 time.sleep(0.5)
                 if flag != "2":
                     break
 
-print("The flag is: " + flag)
+
 server1.logout()
 
 # This is the start of looking to see how many updates are availiable for an ubuntu server
