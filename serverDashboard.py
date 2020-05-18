@@ -1,11 +1,14 @@
 # TO DO - consider looking at pulseway for further ideas
+# - ADD MORE SERVERS!!!
+#   make the code work dynamically to load them 
 # - start by having a mode that displays one server,
 #   then the option to choose which one to look at
 #   then finally look to create a large dash showing all of them!`
-# - look at options for displaying the data from server1 so you can start to work on functionality of this
-#   perhaps display it twice as if it is two seperate connections?
+# - look at options for displaying the data from server[0] so you can start to work on functionality of this
+#   perhaps display it twice as if it is two separate connections?
 # - parse data from server to variables
 # - pull last line from folding file
+# - password protect application?
 
 
 from pexpect import pxssh       # used for ssh connection
@@ -30,17 +33,26 @@ fData = foldingXmlParse()
 
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
-server1 = pxssh.pxssh() # connect to server 'server1'
-if not server1.login (server1_ip, server1_user, ssh_key=server1_key):
-    print ("SSH session failed on login.")
-    print (str(server1))
-    sys.exit() # exit program for failed ssh attempt
+# connect to all servers
+server = {} # this list holds the ssh connections
+
+print("\nConnect to servers...")
+for i in range(numberOfServers):
+    server[i] = pxssh.pxssh() # connect to server 'server[0]'
+
+    if server[i].login (server_ip[i], server_user[i], ssh_key=server_key[i]):
+        print(server_name[i] + " connected.")  
+    else:
+        print ("SSH session for " + server_name[i] + " failed on login.")
+        print (str(server[i]))
+        sys.exit() # exit program for failed ssh attempt
+
 
 print ("SSH session login successful")
 
 # create interrupt thread --------------------------------------------------------------------------------------------------
 # needed for the interrupt thread
-userInput = "0"
+userInput = "d"
 
 # function that registers keyboard press in the background
 # doesn't like being in the functions folder
@@ -59,31 +71,36 @@ def interrupt():
 inter = threading.Thread(target=interrupt)
 inter.start()
 
+# this is the server shown by default
+# can be changed by the "Server Select" screen
+serverSelect = 0
+
 while userInput != "q":
     
     # main page
-    if userInput == "0":
+    if userInput == "d":
         # pull data that doesn't need to be constantly updated
-        storage1 = commandSend(server1, "df -h | grep root | awk ' {print $5}'")
-        storage2 = commandSend(server1, "df -h | grep /dev/sdb2 | awk ' {print $5}'")
+        storage1 = commandSend(server[serverSelect], "df -h | grep root | awk ' {print $5}'")
+        # need to move these lines into the local data file
+        #storage2 = commandSend(server[0], "df -h | grep /dev/sdb2 | awk ' {print $5}'")
 
         # clear terminal screen and start to display data
-        while userInput == "0":
+        while userInput == "d":
             os.system('clear')
-            print('Server Information: ' + server1_name)
-            print(commandSend(server1, 'uptime'))
+            print('Server Information: ' + server_name[serverSelect])
+            print(commandSend(server[serverSelect], 'uptime'))
             print("")
             print(" Storage:")
             print(' storage used / = ' + storage1 + " ", end="")
-            percentBar("#", int(storage2.split("%")[0]), 20)
-            print(' storage used External Drive = ' + storage2 + " ", end="")
-            percentBar("#", int(storage2.split("%")[0]), 20)
+            percentBar("#", int(storage1.split("%")[serverSelect]), 20)
+            # print(' storage used External Drive = ' + storage2 + " ", end="")
+            # percentBar("#", int(storage2.split("%")[serverSelect]), 20)
             print("")
             print(" Folding Status:")
-            print(" " + foldingParse(commandSend(server1, 'tail -1 /var/lib/fahclient/log.txt')))
+            print(" " + foldingParse(commandSend(server[serverSelect], 'tail -1 /var/lib/fahclient/log.txt')))
             print("")
             print("Options:")
-            print("1: Server Select | 2: Folding Details")
+            print("s: Server Select | f: Folding Details")
             print("")
             print("Enter q to exit...")
             
@@ -91,13 +108,34 @@ while userInput != "q":
             # this will loop for 60 seconds before repeating the loop
             for i in range(0, 120):
                 time.sleep(0.5)
-                if userInput != "0":
+                if userInput != "d":
                     break
 
-    # folding page                
-    if userInput == "2":
+    # server select page
+    if userInput == "s":
+        # change the userinput to allow the user to choose new one
 
-        while userInput == "2":
+        # display info
+        os.system('clear')
+        print("Select which server to show details for:")
+        for i in range(numberOfServers):
+            print(str(i) + ": " + server_name[i])
+        # print("\nSelection: ", end='')
+
+        while userInput == "s":
+            for i in range(0, 120):
+                time.sleep(0.5)
+                if userInput != "s":
+                    break
+        
+        serverSelect = int(userInput)
+        # go back to main screen
+        userInput = "d"
+
+    # folding page                
+    if userInput == "f":
+
+        while userInput == "f":
             os.system('clear')
             print("User Name: ", fData.User_Name.get_text())
             print("Rank Change (24hrs):", fData.user.Change_Rank_24hr.get_text())
@@ -107,7 +145,7 @@ while userInput != "q":
             print("Points Last 24hrs:", fData.user.Points_Last_24hr.get_text())
             print("Points 24hrs Average:", fData.user.Points_24hr_Avg.get_text())
             print("")
-            print("0: Main Dashboard | 1: Server Select.")
+            print("d: Main Dashboard | s: Server Select.")
             print("")
             print("Enter q to exit...")
             
@@ -116,17 +154,18 @@ while userInput != "q":
             # this will loop for 60 seconds before repeating the loop
             for i in range(0, 120):
                 time.sleep(0.5)
-                if userInput != "2":
+                if userInput != "f":
                     break
 
-
-server1.logout()
+# logout of all servers
+for i in range(numberOfServers):
+    server[i].logout()
 
 # This is the start of looking to see how many updates are availiable for an ubuntu server
-# server1.sendline("sudo apt update| grep packages | awk '{ print $1" " $2 " " $3 " " $4 " " $5}'")
-# server1.sendline(server1_pass)
-# server1.prompt()
-# test =  sshParse(str(server1.before))
+# server[0].sendline("sudo apt update| grep packages | awk '{ print $1" " $2 " " $3 " " $4 " " $5}'")
+# server[0].sendline(server[0]_pass)
+# server[0].prompt()
+# test =  sshParse(str(server[0].before))
 
 # This is how to print in colour for later
 # print(colored('Press ENTER to exit...', 'white', 'on_green'))
