@@ -47,7 +47,6 @@ for i in range(numberOfServers):
         print (str(server[i]))
         sys.exit() # exit program for failed ssh attempt
 
-
 print ("SSH session login successful")
 
 # create interrupt thread --------------------------------------------------------------------------------------------------
@@ -80,25 +79,39 @@ while userInput != "q":
     # main page
     if userInput == "d":
         # pull data that doesn't need to be constantly updated
-        storage1 = commandSend(server[serverSelect], "df -h | grep root | awk ' {print $5}'")
+        storage = commandSend(server[serverSelect], "df -h / | awk 'FNR == 2 {print $5}'")
         # need to move these lines into the local data file
         #storage2 = commandSend(server[0], "df -h | grep /dev/sdb2 | awk ' {print $5}'")
 
         # clear terminal screen and start to display data
         while userInput == "d":
             os.system('clear')
+            
+            # server name and uptime
             print('Server Information: ' + server_name[serverSelect])
             print(commandSend(server[serverSelect], 'uptime'))
             print("")
+            
+            # storage data
             print(" Storage:")
-            print(' storage used / = ' + storage1 + " ", end="")
-            percentBar("#", int(storage1.split("%")[serverSelect]), 20)
-            # print(' storage used External Drive = ' + storage2 + " ", end="")
-            # percentBar("#", int(storage2.split("%")[serverSelect]), 20)
+            print(' storage used / = ' + storage + " ", end="")                                 
+            percentBar("#", int(storage.split("%")[0]), 20)
+
+            # try to print additional storage if it has been input otherwise pass over
+            try:
+                storage2 = commandSend(server[0], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5}'")
+                print(' Additional Storage = ' + storage2 + " ", end="")
+                percentBar("#", int(storage2.split("%")[0]), 20)
+            except:
+                pass
             print("")
+
+            # print folding data - last line of the log file
             print(" Folding Status:")
             print(" " + foldingParse(commandSend(server[serverSelect], 'tail -1 /var/lib/fahclient/log.txt')))
             print("")
+            
+            # print options at the bottom of the screen
             print("Options:")
             print("s: Server Select | f: Folding Details")
             print("")

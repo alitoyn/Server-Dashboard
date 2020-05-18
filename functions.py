@@ -43,7 +43,7 @@ def getFoldingData(id):
 	if processedDay != str(datetime.datetime.today().day):
 		print("Updating folding stats...")
 		# download folding data - this should be chnaged to be in python at some point
-		URL = "https://folding.extremeoverclocking.com/xml/user_summary.php?u=" + str(id)
+		URL = "https://folding.extremeoverclocking.com/xml/user_summary.php?u=" + id
 		cmd = "wget -q -O foldingStats.xml " + URL
 		os.system(cmd)
 		# append the day of the month to the end
