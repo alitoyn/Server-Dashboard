@@ -1,4 +1,10 @@
-# Currently working on downloading folding file only once a day
+# work on encrypting the file
+# have arguments for the program to encryt and depcrypt without entering display mode
+# Ths way the file can be decrypted and worked on and then re-crypted again
+# will need to set up a function to check for the file and what state it is in
+# will also need to re-crypt it at the end of loading the information
+
+
 
 # TO DO - consider looking at pulseway for further ideas
 # - start by having a mode that displays one server,
@@ -46,15 +52,22 @@ print ("SSH session login successful")
 flag = "0"
 
 # function that looks for keyboard press in the background
-def interrupt(message):
+# doesn't like being in the functions folder
+# the while loop thing here should work, jsut remmeber to add the extra args to where the fucntion is called!!
+def interrupt():
     global flag
-    keystrk=input()
-    # thread doesn't continue until key is pressed
-    flag=keystrk
-    if keystrk == "q":
-        print(message)
+    while flag != "q":
+        keystrk=input()
+        # thread doesn't continue until key is pressed
+        flag=keystrk
+        if keystrk == "q":
+            print("Exiting...")
 
 # display region ------------------------------------------------------------------------------------------------------
+
+# start the interrupt thread
+inter = threading.Thread(target=interrupt)
+inter.start()
 
 while flag != "q":
     
@@ -63,10 +76,6 @@ while flag != "q":
         # pull data that doesn't need to be constantly updated
         storage1 = commandSend(server1, "df -h | grep root | awk ' {print $5}'")
         storage2 = commandSend(server1, "df -h | grep /dev/sdb2 | awk ' {print $5}'")
-
-        # start the interrupt thread
-        inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing comma on args is important!
-        inter.start()
 
         # clear terminal screen and start to display data
         while flag == "0":
@@ -97,8 +106,7 @@ while flag != "q":
 
     # folding page                
     if flag == "2":
-        inter = threading.Thread(target=interrupt, args=("Exiting...",)) # the trailing comma on args is important!
-        inter.start()
+
         while flag == "2":
             os.system('clear')
             print("User Name: ", fData.User_Name.get_text())
