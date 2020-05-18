@@ -1,11 +1,3 @@
-# work on encrypting the file
-# have arguments for the program to encryt and depcrypt without entering display mode
-# Ths way the file can be decrypted and worked on and then re-crypted again
-# will need to set up a function to check for the file and what state it is in
-# will also need to re-crypt it at the end of loading the information
-
-
-
 # TO DO - consider looking at pulseway for further ideas
 # - start by having a mode that displays one server,
 #   then the option to choose which one to look at
@@ -14,7 +6,6 @@
 #   perhaps display it twice as if it is two seperate connections?
 # - parse data from server to variables
 # - pull last line from folding file
-# - encrypt data file
 
 
 from pexpect import pxssh       # used for ssh connection
@@ -40,7 +31,7 @@ fData = foldingXmlParse()
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
 server1 = pxssh.pxssh() # connect to server 'server1'
-if not server1.login (server1_ip, server1_user, server1_pass):
+if not server1.login (server1_ip, server1_user, ssh_key=server1_key):
     print ("SSH session failed on login.")
     print (str(server1))
     sys.exit() # exit program for failed ssh attempt
@@ -49,17 +40,16 @@ print ("SSH session login successful")
 
 # create interrupt thread --------------------------------------------------------------------------------------------------
 # needed for the interrupt thread
-flag = "0"
+userInput = "0"
 
-# function that looks for keyboard press in the background
+# function that registers keyboard press in the background
 # doesn't like being in the functions folder
-# the while loop thing here should work, jsut remmeber to add the extra args to where the fucntion is called!!
 def interrupt():
-    global flag
-    while flag != "q":
-        keystrk=input()
+    global userInput
+    while userInput != "q":
+        keystrk = input()
         # thread doesn't continue until key is pressed
-        flag=keystrk
+        userInput = keystrk
         if keystrk == "q":
             print("Exiting...")
 
@@ -69,16 +59,16 @@ def interrupt():
 inter = threading.Thread(target=interrupt)
 inter.start()
 
-while flag != "q":
+while userInput != "q":
     
     # main page
-    if flag == "0":
+    if userInput == "0":
         # pull data that doesn't need to be constantly updated
         storage1 = commandSend(server1, "df -h | grep root | awk ' {print $5}'")
         storage2 = commandSend(server1, "df -h | grep /dev/sdb2 | awk ' {print $5}'")
 
         # clear terminal screen and start to display data
-        while flag == "0":
+        while userInput == "0":
             os.system('clear')
             print('Server Information: ' + server1_name)
             print(commandSend(server1, 'uptime'))
@@ -101,13 +91,13 @@ while flag != "q":
             # this will loop for 60 seconds before repeating the loop
             for i in range(0, 120):
                 time.sleep(0.5)
-                if flag != "0":
+                if userInput != "0":
                     break
 
     # folding page                
-    if flag == "2":
+    if userInput == "2":
 
-        while flag == "2":
+        while userInput == "2":
             os.system('clear')
             print("User Name: ", fData.User_Name.get_text())
             print("Rank Change (24hrs):", fData.user.Change_Rank_24hr.get_text())
@@ -126,7 +116,7 @@ while flag != "q":
             # this will loop for 60 seconds before repeating the loop
             for i in range(0, 120):
                 time.sleep(0.5)
-                if flag != "2":
+                if userInput != "2":
                     break
 
 
