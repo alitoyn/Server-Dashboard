@@ -158,6 +158,11 @@ while userInput != "q":
             print("Points Last 24hrs:", fData.user.Points_Last_24hr.get_text())
             print("Points 24hrs Average:", fData.user.Points_24hr_Avg.get_text())
             print("")
+            for i in range (numberOfServers):
+                print(server_name[i] + " :")
+                print(" " + foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt')))
+                print("")
+
             print("d: Main Dashboard | s: Server Select.")
             print("")
             print("Enter q to exit...")
