@@ -112,10 +112,9 @@ while userInput != "q":
             print("")
             
             # print options at the bottom of the screen
+            print("--------------------------------------------------------------------------------")
             print("Options:")
-            print("s: Server Select | f: Folding Details")
-            print("")
-            print("Enter q to exit...")
+            print("s: Server Select | f: Folding Details | q: Quit")
             
             # break from loop if user selects an option
             # this will loop for 60 seconds before repeating the loop
@@ -150,6 +149,7 @@ while userInput != "q":
 
         while userInput == "f":
             os.system('clear')
+            print("User Info ----------------------------------------------------------------------")
             print("User Name: ", fData.User_Name.get_text())
             print("Rank Change (24hrs):", fData.user.Change_Rank_24hr.get_text())
             print("")
@@ -158,14 +158,15 @@ while userInput != "q":
             print("Points Last 24hrs:", fData.user.Points_Last_24hr.get_text())
             print("Points 24hrs Average:", fData.user.Points_24hr_Avg.get_text())
             print("")
+            print("Server Info --------------------------------------------------------------------")
             for i in range (numberOfServers):
                 print(server_name[i] + " :")
                 print(" " + foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt')))
                 print("")
 
-            print("d: Main Dashboard | s: Server Select.")
-            print("")
-            print("Enter q to exit...")
+            print("--------------------------------------------------------------------------------")
+            print("Options:")
+            print("d: Main Dashboard | s: Server Select | q: Quit")
             
             
             # break from loop if user selects an option
