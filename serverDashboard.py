@@ -34,6 +34,9 @@ fData = foldingXmlParse()
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
 # connect to all servers
+
+numberOfServers = len(server_name)
+
 server = {} # this list holds the ssh connections
 
 print("\nConnect to servers...")
@@ -162,11 +165,15 @@ while userInput != "q":
             print("Server Info --------------------------------------------------------------------")
             for i in range (numberOfServers):
                 print(server_name[i] + " :")
-                print(" " + foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt')))
+                
+                foldingLog = foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt'))
+                print(" " + foldingLog + " ", end='')
+
+                # the funky code here pulls out the percent from the log file line
+                percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
                 print("")
 
             print(displayOptions(userInput))
-            
             
             # break from loop if user selects an option
             # this will loop for 60 seconds before repeating the loop
