@@ -94,5 +94,3 @@ def displayOptions(currentScreen):
 			if options[i][0] != "q":
 				output = output + " | "
 	return output
-
-    #print("s: Server Select | f: Folding Details | q: Quit")

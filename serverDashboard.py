@@ -99,26 +99,39 @@ while userInput != "q":
             print(" Storage:")
             print(' storage used / = ' + storage + " ", end="")                                 
             percentBar("#", int(storage.split("%")[0]), 20)
-
+            print("")
+            
             # try to print additional storage if it has been input otherwise pass over
             try:
                 storage2 = commandSend(server[0], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5}'")
                 print(' Additional Storage = ' + storage2 + " ", end="")
                 percentBar("#", int(storage2.split("%")[0]), 20)
+                print("")
             except:
                 pass
-            print("")
-
+            
             # print folding data - last line of the log file
             print(" Folding Status:")
-            print(" " + foldingParse(commandSend(server[serverSelect], 'tail -1 /var/lib/fahclient/log.txt')))
+            # pull last line from folding log file and save it as variable
+            foldingLog = foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt'))
+            print(" " + foldingLog + " ", end='')
+
+            # the funky code here pulls out the percent from the log file line
+            percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
             print("")
+
+            # try to print data from the additional log file
+            try:
+                print(" " + extra_logfile_name[serverSelect] + ":")
+                print(" " + commandSend(server[serverSelect], 'tail -1 ' + extra_logfile_location[serverSelect] ))
+                print("")
+            except:
+                pass
+
             
+            
+            # print the user options
             print(displayOptions(userInput))
-            # print options at the bottom of the screen
-            # print("--------------------------------------------------------------------------------")
-            # print("Options:")
-            # print("s: Server Select | f: Folding Details | q: Quit")
             
             # break from loop if user selects an option
             # this will loop for 60 seconds before repeating the loop
@@ -166,6 +179,7 @@ while userInput != "q":
             for i in range (numberOfServers):
                 print(server_name[i] + " :")
                 
+                # pull last line from folding log file and save it as variable
                 foldingLog = foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt'))
                 print(" " + foldingLog + " ", end='')
 
@@ -173,6 +187,7 @@ while userInput != "q":
                 percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
                 print("")
 
+            # print the user options
             print(displayOptions(userInput))
             
             # break from loop if user selects an option
