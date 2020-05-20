@@ -111,10 +111,11 @@ while userInput != "q":
             print(" " + foldingParse(commandSend(server[serverSelect], 'tail -1 /var/lib/fahclient/log.txt')))
             print("")
             
+            print(displayOptions(userInput))
             # print options at the bottom of the screen
-            print("--------------------------------------------------------------------------------")
-            print("Options:")
-            print("s: Server Select | f: Folding Details | q: Quit")
+            # print("--------------------------------------------------------------------------------")
+            # print("Options:")
+            # print("s: Server Select | f: Folding Details | q: Quit")
             
             # break from loop if user selects an option
             # this will loop for 60 seconds before repeating the loop
@@ -164,9 +165,7 @@ while userInput != "q":
                 print(" " + foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt')))
                 print("")
 
-            print("--------------------------------------------------------------------------------")
-            print("Options:")
-            print("d: Main Dashboard | s: Server Select | q: Quit")
+            print(displayOptions(userInput))
             
             
             # break from loop if user selects an option

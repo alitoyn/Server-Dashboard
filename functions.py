@@ -76,3 +76,23 @@ def percentBar(symbol, percent, length):
 		else:
 			print(".", end="")
 	print("]")
+
+def displayOptions(currentScreen):
+	options = [
+		"s: Server Select", 
+		"f: Flolding Details", 
+		"d: Main Dashboard", 
+		"q: Quit"
+		
+	]
+
+	output = "--------------------------------------------------------------------------------\n"
+	output = output + "Options:\n"
+	for i in range(len(options)):
+		if currentScreen != options[i][0]:
+			output = output + options[i]
+			if options[i][0] != "q":
+				output = output + " | "
+	return output
+
+    #print("s: Server Select | f: Folding Details | q: Quit")
