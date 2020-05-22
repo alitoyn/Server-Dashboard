@@ -1,15 +1,33 @@
 # TO DO - consider looking at pulseway for further ideas
-# - ADD MORE SERVERS!!!
-#   make the code work dynamically to load them 
-# - start by having a mode that displays one server,
-#   then the option to choose which one to look at
-#   then finally look to create a large dash showing all of them!`
-# - look at options for displaying the data from server[0] so you can start to work on functionality of this
-#   perhaps display it twice as if it is two separate connections?
-# - parse data from server to variables
-# - pull last line from folding file
+
+# - dash to display multiple servers
 # - password protect application?
 
+# folding additions:
+#   - predict how long is left?
+
+# use getpass from the following code to save password for sudo login later...
+# from pexpect import pxssh
+# import getpass
+# try:
+#     s = pxssh.pxssh()
+#     hostname = raw_input('hostname: ')
+#     username = raw_input('username: ')
+#     password = getpass.getpass('password: ')
+#     s.login(hostname, username, password)
+#     s.sendline('uptime')   # run a command
+#     s.prompt()             # match the prompt
+#     print(s.before)        # print everything before the prompt.
+#     s.sendline('ls -l')
+#     s.prompt()
+#     print(s.before)
+#     s.sendline('df')
+#     s.prompt()
+#     print(s.before)
+#     s.logout()
+# except pxssh.ExceptionPxssh as e:
+#     print("pxssh failed on login.")
+#     print(e)
 
 from pexpect import pxssh       # used for ssh connection
 from functions import *         # import all functions written for this program
@@ -43,12 +61,13 @@ print("\nConnect to servers...")
 for i in range(numberOfServers):
     server[i] = pxssh.pxssh() # connect to server 'server[0]'
 
-    if server[i].login (server_ip[i], server_user[i], ssh_key=server_key[i]):
+    try:
+        e = server[i].login (server_ip[i], server_user[i], ssh_key=server_key[i], quiet=True)
         print(server_name[i] + " connected. (" + str(i + 1) + "/" + str(numberOfServers) + ")")  
-    else:
+    except pxssh.ExceptionPxssh as e:
         print ("SSH session for " + server_name[i] + " failed on login.")
         print (str(server[i]))
-        sys.exit() # exit program for failed ssh attempt
+        # sys.exit() # exit program for failed ssh attempt
 
 print ("SSH session login successful")
 
@@ -97,10 +116,10 @@ while userInput != "q":
             
             # storage data
             print(" Storage:")
-            print(' storage used / = ' + storage + " ", end="")                                 
+            print(' Root Directory / = ' + storage + " ", end="")                                 
             percentBar("#", int(storage.split("%")[0]), 20)
             print("")
-            
+
             # try to print additional storage if it has been input otherwise pass over
             try:
                 storage2 = commandSend(server[0], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5}'")
@@ -113,20 +132,26 @@ while userInput != "q":
             # print folding data - last line of the log file
             print(" Folding Status:")
             # pull last line from folding log file and save it as variable
-            foldingLog = foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt'))
-            print(" " + foldingLog + " ", end='')
+            try:
+                foldingLog = foldingParse(commandSend(server[serverSelect], 'tail -1 /var/lib/fahclient/log.txt'))
+                print(" " + foldingLog + " ", end='')
 
-            # the funky code here pulls out the percent from the log file line
-            percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
+                # the funky code here pulls out the percent from the log file line
+                percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
+            except:
+                print(" Log file parse failed")
             print("")
 
             # try to print data from the additional log file
-            try:
-                print(" " + extra_logfile_name[serverSelect] + ":")
-                print(" " + commandSend(server[serverSelect], 'tail -1 ' + extra_logfile_location[serverSelect] ))
-                print("")
-            except:
-                pass
+            for i in range(len(extra_logfile_name[serverSelect])):
+                if extra_logfile_name[serverSelect][i] == 0:
+                    break
+                try:
+                    print(" " + extra_logfile_name[serverSelect][i] + ":")
+                    print(" " + commandSend(server[serverSelect], 'tail -1 ' + extra_logfile_location[serverSelect][i] ))
+                    print("")
+                except:
+                    pass
 
             
             
@@ -179,13 +204,19 @@ while userInput != "q":
             for i in range (numberOfServers):
                 print(server_name[i] + " :")
                 
-                # pull last line from folding log file and save it as variable
-                foldingLog = foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt'))
-                print(" " + foldingLog + " ", end='')
+                try:
+                    foldingLog = foldingParse(commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt'))
+                    print(" " + foldingLog + " ", end='')
 
-                # the funky code here pulls out the percent from the log file line
-                percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
-                print("")
+                    try:
+                        # the funky code here pulls out the percent from the log file line
+                        percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
+                    except:
+                        print("")
+                    print("")
+                except:
+                    print(" Log file parse failed")
+                    print("")
 
             # print the user options
             print(displayOptions(userInput))
@@ -196,6 +227,50 @@ while userInput != "q":
                 time.sleep(0.5)
                 if userInput != "f":
                     break
+
+    # send command page
+    if userInput == "c":
+        # display info
+        os.system('clear')
+        print("\nThis is currently for show and does nothing\n")
+        print("Which server do you want to send a command:")
+        for i in range(numberOfServers):
+            print(str(i) + ": " + server_name[i])
+        print("")
+
+        while userInput == "c":
+            for i in range(0, 120):
+                time.sleep(0.5)
+                if userInput != "c":
+                    break
+        
+        serverCommand = int(userInput)
+        userInput = "c"
+
+        print("\nChoose command to send to " + server_name[serverCommand])
+        print("0: Shutdown")
+        print("1: Reboot")
+        print("2: Run Updates")
+        print("")
+        while userInput == "c":
+            for i in range(0, 120):
+                time.sleep(0.5)
+                if userInput != "c":
+                    break
+
+        serverCommand = int(userInput)
+        userInput = "c"
+
+        if(serverCommand == 0):
+            print("Performing shutdown...")
+        if(serverCommand == 1):
+            print("Performing reboot...")
+        if(serverCommand == 2):
+            print("Performing update...")
+
+        time.sleep(1)
+        userInput = "d"
+
 
 # logout of all servers
 for i in range(numberOfServers):

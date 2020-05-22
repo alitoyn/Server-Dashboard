@@ -80,8 +80,9 @@ def percentBar(symbol, percent, length):
 def displayOptions(currentScreen):
 	options = [
 		"s: Server Select", 
-		"f: Flolding Details", 
-		"d: Main Dashboard", 
+		"d: Dashboard",
+		"f: Folding Details", 
+		"c: Send Command", 
 		"q: Quit"
 		
 	]
