@@ -95,3 +95,29 @@ def displayOptions(currentScreen):
 			if options[i][0] != "q":
 				output = output + " | "
 	return output
+
+def getWordpress(api, user_URL):
+	import datetime, os
+	# https://stats.wordpress.com/csv.php?api_key=631f9c8d140d&blog_id=0&days=-1&blog_uri=http://theucord.com&format=xml&post_id=129
+	print("Updating wordpress stats...")
+	try:	
+		URL = 'https://stats.wordpress.com/csv.php?api_key=' + api + '&blog_id=0&days=-1&blog_uri=' + user_URL + '&format=xml'
+		
+		print(URL)
+		cmd = "wget -q -O wordpressStats.xml " + URL
+		os.system(cmd)
+		print("wordpress stats updated")
+	except:
+		print("wordpress stats update failed")
+
+def wordpressParse():
+	try:
+		# import beautiful soup - for parsing information
+		from bs4 import BeautifulSoup
+		# use BS to parse the data
+		with open("wordpressStats.xml") as fp:
+			data = BeautifulSoup(fp, "xml")
+		# pass this data back to the main funciton
+		return data
+	except:		
+		print("Wordpress Stats data parse failed")

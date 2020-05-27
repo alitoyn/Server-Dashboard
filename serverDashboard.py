@@ -33,6 +33,7 @@ from pexpect import pxssh       # used for ssh connection
 from functions import *         # import all functions written for this program
 import sys, time, os, threading, getch # other libraries
 from termcolor import colored, cprint
+import getpass
 
 # get config info ----------------------------------------------------------------------------------------------------------
 
@@ -48,6 +49,13 @@ except ImportError:
 # get the most up to date folding data for the user
 getFoldingData(foldingUserID)
 fData = foldingXmlParse()
+
+# getWordpress(wordpress_apiKey, wordpress_URL)
+# wData = wordpressParse()
+
+# print(wData)
+
+# time.sleep(5)
 
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
@@ -69,7 +77,7 @@ for i in range(numberOfServers):
         print (str(server[i]))
         # sys.exit() # exit program for failed ssh attempt
 
-print ("SSH session login successful")
+print ("\nSSH session login successful")
 
 # create interrupt thread --------------------------------------------------------------------------------------------------
 # needed for the interrupt thread
@@ -100,13 +108,29 @@ while userInput != "q":
     
     # main page
     if userInput == "d":
+        # prompt the user that something is happening
+        print("\nLoading...\n")
+
         # pull data that doesn't need to be constantly updated
+        # get storage data
         storage = commandSend(server[serverSelect], "df -h / | awk 'FNR == 2 {print $5}'")
-        # need to move these lines into the local data file
-        #storage2 = commandSend(server[0], "df -h | grep /dev/sdb2 | awk ' {print $5}'")
+        try:
+            storage2 = commandSend(server[serverSelect], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5}'")
+            add_stor_flag = 1
+        except:
+            add_stor_flag = 0
+
+        #get update data
+        try:
+            updates = commandSend(server[serverSelect], 'apt-get upgrade --dry-run | grep "newly install"')
+            update_flag = 1
+        except:
+            updates = "Failed to get data"
+            update_flag = 0       
 
         # clear terminal screen and start to display data
         while userInput == "d":
+            # clear the screen
             os.system('clear')
             
             # server name and uptime
@@ -121,13 +145,18 @@ while userInput != "q":
             print("")
 
             # try to print additional storage if it has been input otherwise pass over
-            try:
-                storage2 = commandSend(server[0], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5}'")
+            if add_stor_flag == 1:
                 print(' Additional Storage = ' + storage2 + " ", end="")
                 percentBar("#", int(storage2.split("%")[0]), 20)
                 print("")
-            except:
-                pass
+
+            # try to print availble updates
+            if update_flag == 1:                
+                print(" Update status:\n " + updates.split(' ')[0] + " packages to update")
+                print("")
+            else:
+                print(" Update status:\n " + updates)
+                print("")
             
             # print folding data - last line of the log file
             print(" Folding Status:")
@@ -153,9 +182,7 @@ while userInput != "q":
                 except:
                     pass
 
-            
-            
-            # print the user options
+            # print the user options at the bottom
             print(displayOptions(userInput))
             
             # break from loop if user selects an option
@@ -244,10 +271,10 @@ while userInput != "q":
                 if userInput != "c":
                     break
         
-        serverCommand = int(userInput)
+        serverToSendCommand = int(userInput)
         userInput = "c"
 
-        print("\nChoose command to send to " + server_name[serverCommand])
+        print("\nChoose command to send to " + server_name[serverToSendCommand])
         print("0: Shutdown")
         print("1: Reboot")
         print("2: Run Updates")
@@ -258,15 +285,25 @@ while userInput != "q":
                 if userInput != "c":
                     break
 
-        serverCommand = int(userInput)
+        commandToSendServer = int(userInput)
         userInput = "c"
 
-        if(serverCommand == 0):
+        if(commandToSendServer == 0):
             print("Performing shutdown...")
-        if(serverCommand == 1):
+        if(commandToSendServer == 1):
             print("Performing reboot...")
-        if(serverCommand == 2):
+        if(commandToSendServer == 2):
             print("Performing update...")
+            
+
+            # this doesn't work yet
+            # password = getpass.getpass('sudo password: ')
+            # commandSend(server[serverToSendCommand], 'sudo apt-get update && sudo apt upgrade')
+            # commandSend(server[serverToSendCommand], password)
+
+
+
+
 
         time.sleep(1)
         userInput = "d"

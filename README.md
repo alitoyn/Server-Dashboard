@@ -8,10 +8,10 @@ Utilises ssh keys to connect so no need to store passwords!
 - Root storage capacity + an additional storage location
 - F@H user stats and server status
 - display last line from user added log files (show backup status etc)
+- Show availble updates (Ubuntu only)
 
 **Upcoming Functionality:**
 - Send commands to servers
-- Show availble updates
 - Network and CPU load graphs
 - More details on the F@H stats page
 - password lock application
