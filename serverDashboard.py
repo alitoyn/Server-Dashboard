@@ -309,6 +309,7 @@ while userInput != "q":
         print("Select which option to show details for:\n")
         print("0: updates")
         print("1: storage")
+        print("2: uptime")
 
         while userInput == "o":
             for i in range(0, 120):
@@ -367,6 +368,17 @@ while userInput != "q":
                     print(' Additional Storage = ' + storage2 + " ", end="")
                     percentBar("#", int(storage2.split("%")[0]), 20)
                     print("")
+
+        # print uptime overview
+        if choice == "2":
+            os.system('clear')
+            print("Loading uptime details...\n")
+            
+            for i in range(numberOfServers):
+                print(server_name[i] + " :")
+
+                print(commandSend(server[i], 'uptime'))
+                print("")
 
         # print the user options
         print(displayOptions(userInput))
