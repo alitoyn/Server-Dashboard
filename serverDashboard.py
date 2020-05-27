@@ -337,7 +337,7 @@ while userInput != "q":
 
                  # try to print availble updates
                 if update_flag == 1:                
-                    print(updates.split(' ')[0] + " packages to update")
+                    print(" " + updates.split(' ')[0] + " packages to update")
                     print("")
                 else:
                     print(updates)
@@ -368,15 +368,15 @@ while userInput != "q":
                     percentBar("#", int(storage2.split("%")[0]), 20)
                     print("")
 
-            # print the user options
-            print(displayOptions(userInput))
-            
-            # break from loop if user selects an option
-            # this will loop for 60 seconds before repeating the loop
-            while 1:
-               time.sleep(0.5)
-               if userInput != "o":
-                    break
+        # print the user options
+        print(displayOptions(userInput))
+
+        # break from loop if user selects an option
+        # this will loop for 60 seconds before repeating the loop
+        while 1:
+           time.sleep(0.5)
+           if userInput != "o":
+                break
 # logout of all servers
 for i in range(numberOfServers):
     server[i].logout()
