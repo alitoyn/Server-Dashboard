@@ -81,6 +81,7 @@ def displayOptions(currentScreen):
 	options = [
 		"s: Server Select", 
 		"d: Dashboard",
+		"o: Overview",
 		"f: Folding Details", 
 		"c: Send Command", 
 		"q: Quit"

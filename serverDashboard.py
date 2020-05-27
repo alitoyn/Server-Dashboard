@@ -60,7 +60,6 @@ fData = foldingXmlParse()
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
 # connect to all servers
-
 numberOfServers = len(server_name)
 
 server = {} # this list holds the ssh connections
@@ -294,21 +293,61 @@ while userInput != "q":
             print("Performing reboot...")
         if(commandToSendServer == 2):
             print("Performing update...")
-            
-
             # this doesn't work yet
             # password = getpass.getpass('sudo password: ')
             # commandSend(server[serverToSendCommand], 'sudo apt-get update && sudo apt upgrade')
             # commandSend(server[serverToSendCommand], password)
-
-
-
-
-
         time.sleep(1)
         userInput = "d"
 
+    if userInput == 'o':
+        # display info
+        os.system('clear')
+        print("Select which option to show details for:\n")
+        print("0: updates")
+        print("1: storage (this doesn't work yet!!)")
 
+        while userInput == "o":
+            for i in range(0, 120):
+                time.sleep(0.5)
+                if userInput != "o":
+                    break
+        
+        choice = userInput
+        userInput = 'o'
+
+        if choice == "0":
+            os.system('clear')
+            print("Loading update details...\n")
+            
+            for i in range(numberOfServers):
+                print(server_name[i] + " :")
+                
+                #get update data
+                try:
+                    updates = commandSend(server[i], 'apt-get upgrade --dry-run | grep "newly install"')
+                    update_flag = 1
+                except:
+                    updates = "Failed to get data"
+                    update_flag = 0 
+
+                 # try to print availble updates
+                if update_flag == 1:                
+                    print(updates.split(' ')[0] + " packages to update")
+                    print("")
+                else:
+                    print(updates)
+                    print("")
+
+            # print the user options
+            print(displayOptions(userInput))
+            
+            # break from loop if user selects an option
+            # this will loop for 60 seconds before repeating the loop
+            while 1:
+               time.sleep(0.5)
+               if userInput != "o":
+                    break
 # logout of all servers
 for i in range(numberOfServers):
     server[i].logout()
