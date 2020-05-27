@@ -389,6 +389,33 @@ while userInput != "q":
            time.sleep(0.5)
            if userInput != "o":
                 break
+
+    # new ssh window page
+    if userInput == "n":
+        # change the userinput to allow the user to choose new one
+
+        # display info
+        os.system('clear')
+        print("Which server would you like to open a conneciton with:")
+        for i in range(numberOfServers):
+            print(str(i) + ": " + server_name[i])
+
+        while userInput == "n":
+            for i in range(0, 120):
+                time.sleep(0.5)
+                if userInput != "n":
+                    break
+
+        serverSelect = int(userInput)
+
+        print("Opeining new window...")
+        cmd = 'gnome-terminal -q --command "ssh -i ' + server_key[serverSelect] + ' ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + '"'
+        os.system(cmd)
+
+        # go back to main screen
+        userInput = "d"
+
+
 # logout of all servers
 for i in range(numberOfServers):
     server[i].logout()

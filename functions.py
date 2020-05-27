@@ -84,17 +84,21 @@ def displayOptions(currentScreen):
 		"o: Overview",
 		"f: Folding Details", 
 		"c: Send Command", 
+		"n: New SSH Window",
 		"q: Quit"
 		
 	]
 
 	output = "--------------------------------------------------------------------------------\n"
 	output = output + "Options:\n"
+	limit = 3
 	for i in range(len(options)):
 		if currentScreen != options[i][0]:
 			output = output + options[i]
 			if options[i][0] != "q":
 				output = output + " | "
+		if i == 3:
+			output = output + "\n"
 	return output
 
 def getWordpress(api, user_URL):
