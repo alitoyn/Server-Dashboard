@@ -409,7 +409,7 @@ while userInput != "q":
         serverSelect = int(userInput)
 
         print("Opeining new window...")
-        cmd = 'gnome-terminal -q --command "ssh -i ' + server_key[serverSelect] + ' ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + '"'
+        cmd = default_terminal + ' --command "ssh -i ' + server_key[serverSelect] + ' ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + '"'
         os.system(cmd)
 
         # go back to main screen
