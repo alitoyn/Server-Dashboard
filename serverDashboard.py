@@ -164,8 +164,11 @@ while userInput != "q":
                 foldingLog = foldingParse(commandSend(server[serverSelect], 'tail -1 /var/lib/fahclient/log.txt'))
                 print(" " + foldingLog + " ", end='')
 
-                # the funky code here pulls out the percent from the log file line
-                percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
+                try:
+                    # the funky code here pulls out the percent from the log file line
+                    percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
+                except:
+                    print("")
             except:
                 print(" Log file parse failed")
             print("")
@@ -305,7 +308,7 @@ while userInput != "q":
         os.system('clear')
         print("Select which option to show details for:\n")
         print("0: updates")
-        print("1: storage (this doesn't work yet!!)")
+        print("1: storage")
 
         while userInput == "o":
             for i in range(0, 120):
@@ -316,6 +319,7 @@ while userInput != "q":
         choice = userInput
         userInput = 'o'
 
+        # print update overview
         if choice == "0":
             os.system('clear')
             print("Loading update details...\n")
@@ -337,6 +341,31 @@ while userInput != "q":
                     print("")
                 else:
                     print(updates)
+                    print("")
+
+        # print storage overview
+        if choice == "1":
+            os.system('clear')
+            print("Loading storage details...\n")
+            
+            for i in range(numberOfServers):
+                print(server_name[i] + " :")
+
+                storage = commandSend(server[i], "df -h / | awk 'FNR == 2 {print $5}'")
+                try:
+                    storage2 = commandSend(server[i], "df -h " + additional_storage[i] + "| awk 'FNR == 2 {print $5}'")
+                    add_stor_flag = 1
+                except:
+                    add_stor_flag = 0
+                
+                print(' Root Directory / = ' + storage + " ", end="")                                 
+                percentBar("#", int(storage.split("%")[0]), 20)
+                print("")
+
+                # try to print additional storage if it has been input otherwise pass over
+                if add_stor_flag == 1:
+                    print(' Additional Storage = ' + storage2 + " ", end="")
+                    percentBar("#", int(storage2.split("%")[0]), 20)
                     print("")
 
             # print the user options
