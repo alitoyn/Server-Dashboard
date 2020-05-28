@@ -112,9 +112,11 @@ while userInput != "q":
 
         # pull data that doesn't need to be constantly updated
         # get storage data
-        storage = commandSend(server[serverSelect], "df -h / | awk 'FNR == 2 {print $5}'")
+        # cmd = "df -h / | awk 'FNR == 2 {print $5 " (" $3 "/" $2 ")"}'"
+        cmd = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
+        storage = commandSend(server[serverSelect], cmd) #"df -h / | awk 'FNR == 2 {print $5 $2}'"
         try:
-            storage2 = commandSend(server[serverSelect], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5}'")
+            storage2 = commandSend(server[serverSelect], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'")
             add_stor_flag = 1
         except:
             add_stor_flag = 0
@@ -352,9 +354,10 @@ while userInput != "q":
             for i in range(numberOfServers):
                 print(server_name[i] + " :")
 
-                storage = commandSend(server[i], "df -h / | awk 'FNR == 2 {print $5}'")
+                cmd = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
+                storage = commandSend(server[i], cmd)
                 try:
-                    storage2 = commandSend(server[i], "df -h " + additional_storage[i] + "| awk 'FNR == 2 {print $5}'")
+                    storage2 = commandSend(server[i], "df -h " + additional_storage[i] + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'")
                     add_stor_flag = 1
                 except:
                     add_stor_flag = 0
