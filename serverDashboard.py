@@ -1,8 +1,5 @@
 # TO DO - consider looking at pulseway for further ideas
 
-# get width of terminal - pass text to print, then print '-' up to the width
-# ^ this is much more efficient to print the section breaks
-
 # - dash to display multiple servers
 # - password protect application?
 
@@ -53,13 +50,6 @@ except ImportError:
 getFoldingData(foldingUserID)
 fData = foldingXmlParse()
 
-# getWordpress(wordpress_apiKey, wordpress_URL)
-# wData = wordpressParse()
-
-# print(wData)
-
-# time.sleep(5)
-
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
 # connect to all servers
@@ -103,7 +93,7 @@ inter = threading.Thread(target=interrupt)
 inter.start()
 
 # set the default rows, columns for terminal
-termSize = ["24", "80"] # rows, columns
+termSize = [24, 80] # rows, columns
 
 # this is the server shown by default
 # can be changed by the "Server Select" screen
@@ -429,24 +419,7 @@ while userInput != "q":
         # go back to main screen
         userInput = "d"
 
-
 # logout of all servers
 for i in range(numberOfServers):
     server[i].logout()
 
-# This is the start of looking to see how many updates are availiable for an ubuntu server
-# server[0].sendline("sudo apt update| grep packages | awk '{ print $1" " $2 " " $3 " " $4 " " $5}'")
-# server[0].sendline(server[0]_pass)
-# server[0].prompt()
-# test =  sshParse(str(server[0].before))
-
-# This is how to print in colour for later
-# print(colored('Press ENTER to exit...', 'white', 'on_green'))
-
-# not an easy fix, needs some work, doesn't let the thread stay in the background
-# this is for getting characters without using enter
-# import getch
-# # ...
-# char = getch.getch() # User input, but not displayed on the screen
-# # or
-# char = getch.getche() # also displayed on the screen
