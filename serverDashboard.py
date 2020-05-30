@@ -1,5 +1,8 @@
 # TO DO - consider looking at pulseway for further ideas
 
+# get width of terminal - pass text to print, then print '-' up to the width
+# ^ this is much more efficient to print the section breaks
+
 # - dash to display multiple servers
 # - password protect application?
 
@@ -30,7 +33,7 @@
 #     print(e)
 
 from pexpect import pxssh       # used for ssh connection
-from functions import *         # import all functions written for this program
+from functions import *        # import all functions written for this program
 import sys, time, os, threading, getch # other libraries
 from termcolor import colored, cprint
 import getpass
@@ -99,12 +102,18 @@ def interrupt():
 inter = threading.Thread(target=interrupt)
 inter.start()
 
+# set the default rows, columns for terminal
+termSize = ["24", "80"] # rows, columns
+
 # this is the server shown by default
 # can be changed by the "Server Select" screen
 serverSelect = 0
 
 while userInput != "q":
-    
+    # update current rows and columns of the terminal 
+    # rows, columns = os.popen('stty size', 'r').read().split()
+    termSize = updateTermSize()
+
     # main page
     if userInput == "d":
         # prompt the user that something is happening
@@ -187,7 +196,8 @@ while userInput != "q":
                     pass
 
             # print the user options at the bottom
-            print(displayOptions(userInput))
+            termSize = updateTermSize()            
+            print(displayOptions(userInput, termSize))
             
             # break from loop if user selects an option
             # this will loop for 60 seconds before repeating the loop
@@ -199,7 +209,6 @@ while userInput != "q":
     # server select page
     if userInput == "s":
         # change the userinput to allow the user to choose new one
-
         # display info
         os.system('clear')
         print("Select which server to show details for:")
@@ -221,8 +230,9 @@ while userInput != "q":
     if userInput == "f":
 
         while userInput == "f":
+            termSize = updateTermSize()
             os.system('clear')
-            print("User Info ----------------------------------------------------------------------")
+            print(getScreenDivider("User Info", termSize))
             print("User Name: ", fData.User_Name.get_text())
             print("Rank Change (24hrs):", fData.user.Change_Rank_24hr.get_text())
             print("")
@@ -231,7 +241,7 @@ while userInput != "q":
             print("Points Last 24hrs:", fData.user.Points_Last_24hr.get_text())
             print("Points 24hrs Average:", fData.user.Points_24hr_Avg.get_text())
             print("")
-            print("Server Info --------------------------------------------------------------------")
+            print(getScreenDivider("Server Info", termSize))
             for i in range (numberOfServers):
                 print(server_name[i] + " :")
                 
@@ -250,7 +260,7 @@ while userInput != "q":
                     print("")
 
             # print the user options
-            print(displayOptions(userInput))
+            print(displayOptions(userInput, termSize))
             
             # break from loop if user selects an option
             # this will loop for 60 seconds before repeating the loop
@@ -384,7 +394,8 @@ while userInput != "q":
                 print("")
 
         # print the user options
-        print(displayOptions(userInput))
+        termSize = updateTermSize()
+        print(displayOptions(userInput, termSize))
 
         # break from loop if user selects an option
         # this will loop for 60 seconds before repeating the loop
@@ -411,7 +422,7 @@ while userInput != "q":
 
         serverSelect = int(userInput)
 
-        print("Opeining new window...")
+        print("Opening new window...")
         cmd = default_terminal + ' --command "ssh -i ' + server_key[serverSelect] + ' ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + '"'
         os.system(cmd)
 

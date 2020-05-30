@@ -77,7 +77,7 @@ def percentBar(symbol, percent, length):
 			print(".", end="")
 	print("]")
 
-def displayOptions(currentScreen):
+def displayOptions(currentScreen, size):
 	options = [
 		"s: Server Select", 
 		"d: Dashboard",
@@ -89,8 +89,9 @@ def displayOptions(currentScreen):
 		
 	]
 
-	output = "--------------------------------------------------------------------------------\n"
-	output = output + "Options:\n"
+	# output = "--------------------------------------------------------------------------------\n"
+	# output = output + "Options:\n"
+	output = getScreenDivider("Options:", size)
 	limit = 3
 	for i in range(len(options)):
 		if currentScreen != options[i][0]:
@@ -126,3 +127,20 @@ def wordpressParse():
 		return data
 	except:		
 		print("Wordpress Stats data parse failed")
+
+def updateTermSize():
+	import os
+	try:
+		r, c = os.popen('stty size', 'r').read().split()
+		return [int(r), int(c)]
+
+	except:
+		return [24, 80]
+
+def getScreenDivider(text, size):
+	output = text + " "
+
+	for i in range(size[1] - len(text) - 1):
+		output = output + "-"
+	output = output + "\n"
+	return output
