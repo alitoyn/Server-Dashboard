@@ -32,14 +32,12 @@
 from pexpect import pxssh       # used for ssh connection
 from functions import *        # import all functions written for this program
 import sys, time, os, threading, getch # other libraries
-from termcolor import colored, cprint
-import getpass
 
 # get config info ----------------------------------------------------------------------------------------------------------
 
 # Attempt to import server data from file if it exists
 try:
-    from local_data import *
+    from local_data import *        #import all data from the config file
     print("Config file found...")
 except ImportError:
     print("No config file found")
@@ -49,6 +47,7 @@ except ImportError:
 # get the most up to date folding data for the user
 getFoldingData(foldingUserID)
 fData = foldingXmlParse()
+
 
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
@@ -76,7 +75,7 @@ print ("\nSSH session login successful")
 userInput = "d"
 
 # function that registers keyboard press in the background
-# doesn't like being in the functions folder
+# doesn't like being in the functions file
 def interrupt():
     global userInput
     while userInput != "q":
@@ -387,11 +386,15 @@ while userInput != "q":
         termSize = updateTermSize()
         print(displayOptions(userInput, termSize))
 
+        print("\nInput 'r' to reset and choose another overview")
+
         # break from loop if user selects an option
         # this will loop for 60 seconds before repeating the loop
         while 1:
            time.sleep(0.5)
-           if userInput != "o":
+           if userInput != "o" or userInput == "r":
+                if userInput == "r":
+                    userInput = "o"
                 break
 
     # new ssh window page

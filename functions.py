@@ -1,5 +1,4 @@
 # Functions ----------------------------------------------------------------------------------------------------------------
-global flag
 ## pulls the data from a row in the config file
 def fileParse(dataToFind, fileVariable, index):
     if dataToFind in fileVariable[index]:
@@ -89,9 +88,7 @@ def displayOptions(currentScreen, size):
 		
 	]
 
-	# output = "--------------------------------------------------------------------------------\n"
-	# output = output + "Options:\n"
-	output = getScreenDivider("Options:", size)
+	output = getScreenDivider("Options", size)
 	limit = 3
 	for i in range(len(options)):
 		if currentScreen != options[i][0]:
