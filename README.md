@@ -10,10 +10,10 @@ Utilises ssh keys to connect so no need to store passwords!
 - display last line from user added log files (show backup status etc)
 - Show available updates (Ubuntu only)
 - Open new terminal window with ssh connection to a selected server
+- Setup Program to build config file
 
 **Upcoming Functionality:**
 - Send commands to servers
 - Network and CPU load graphs
 - More details on the F@H stats page
 - Password lock application
-- Setup program to help initialise the system
