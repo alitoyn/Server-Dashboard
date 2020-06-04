@@ -88,7 +88,7 @@ def displayOptions(currentScreen, size):
 		
 	]
 
-	output = getScreenDivider("Options", size)
+	output = getScreenDivider("Options", size[1])
 	limit = 3
 	for i in range(len(options)):
 		if currentScreen != options[i][0]:
@@ -111,7 +111,7 @@ def updateTermSize():
 def getScreenDivider(text, size):
 	output = text + " "
 
-	for i in range(size[1] - len(text) - 1):
+	for i in range(size - len(text) - 1):
 		output = output + "-"
 	output = output + "\n"
 	return output

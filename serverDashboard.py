@@ -221,7 +221,7 @@ while userInput != "q":
         while userInput == "f":
             termSize = updateTermSize()
             os.system('clear')
-            print(getScreenDivider("User Info", termSize))
+            print(getScreenDivider("User Info", termSize[1]))
             print("User Name: ", fData.User_Name.get_text())
             print("Rank Change (24hrs):", fData.user.Change_Rank_24hr.get_text())
             print("")
