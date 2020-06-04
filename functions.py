@@ -115,3 +115,20 @@ def getScreenDivider(text, size):
 		output = output + "-"
 	output = output + "\n"
 	return output
+
+def dataVal(question, allowedInputs):
+	import time
+	check = 0
+	length = len(allowedInputs)
+	while(1):
+		response = input(question)
+		for i in range(length):
+			if response == allowedInputs[i]:
+				check = 1
+				break
+		if check == 0:
+			print("\nPlease enter a valid input...\n")
+			time.sleep(0.5)
+		else:
+			return response
+			break

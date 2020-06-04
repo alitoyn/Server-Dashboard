@@ -37,7 +37,7 @@ import sys, time, os, threading, getch # other libraries
 
 # Attempt to import server data from file if it exists
 try:
-    from local_data import *        #import all data from the config file
+    from config import *        #import all data from the config file
     print("Config file found...")
 except ImportError:
     print("No config file found")
@@ -230,7 +230,7 @@ while userInput != "q":
             print("Points Last 24hrs:", fData.user.Points_Last_24hr.get_text())
             print("Points 24hrs Average:", fData.user.Points_24hr_Avg.get_text())
             print("")
-            print(getScreenDivider("Server Info", termSize))
+            print(getScreenDivider("Server Info", termSize[1]))
             for i in range (numberOfServers):
                 print(server_name[i] + " :")
                 
