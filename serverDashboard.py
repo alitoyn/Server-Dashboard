@@ -293,14 +293,14 @@ while userInput != "q":
 
         # set command
         if(commandToSendServer == 0):
-            print("Performing shutdown...")
+            passedCommand = 'sudo shutdown'
         if(commandToSendServer == 1):
-            print("Performing reboot...")
-        if(commandToSendServer == 2):
-            print("Opening new window...")
-            passedCommand = 'sudo apt upgrade'
+            passedCommand = 'sudo reboot'
+        if(commandToSendServer == 2):     
+            passedCommand = 'sudo apt upgrade && sleep 1'
         
         # initiate command   
+        print("Opening new window...")
         cmd = default_terminal + ' --command "ssh -i ' + server_key[serverToSendCommand] + ' -p ' + server_port[serverToSendCommand] + ' -t ' + server_user[serverToSendCommand] + '@' + server_ip[serverToSendCommand] + ' ' + passedCommand + '"'
         os.system(cmd)
         time.sleep(1)
