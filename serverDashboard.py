@@ -291,16 +291,18 @@ while userInput != "q":
         commandToSendServer = int(userInput)
         userInput = "c"
 
+        # set command
         if(commandToSendServer == 0):
             print("Performing shutdown...")
         if(commandToSendServer == 1):
             print("Performing reboot...")
         if(commandToSendServer == 2):
-            print("Performing update...")
-            # this doesn't work yet
-            # password = getpass.getpass('sudo password: ')
-            # commandSend(server[serverToSendCommand], 'sudo apt-get update && sudo apt upgrade')
-            # commandSend(server[serverToSendCommand], password)
+            print("Opening new window...")
+            passedCommand = 'sudo apt upgrade'
+        
+        # initiate command   
+        cmd = default_terminal + ' --command "ssh -i ' + server_key[serverToSendCommand] + ' -p ' + server_port[serverToSendCommand] + ' -t ' + server_user[serverToSendCommand] + '@' + server_ip[serverToSendCommand] + ' ' + passedCommand + '"'
+        os.system(cmd)
         time.sleep(1)
         userInput = "d"
 
@@ -416,7 +418,7 @@ while userInput != "q":
         serverSelect = int(userInput)
 
         print("Opening new window...")
-        cmd = default_terminal + ' --command "ssh -i ' + server_key[serverSelect] + ' ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + '"'
+        cmd = default_terminal + ' --command "ssh -i ' + server_key[serverSelect] + ' -p ' + server_port[serverSelect] + ' ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + '"'
         os.system(cmd)
 
         # go back to main screen
