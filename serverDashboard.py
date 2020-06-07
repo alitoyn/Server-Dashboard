@@ -61,7 +61,7 @@ for i in range(numberOfServers):
     server[i] = pxssh.pxssh() # connect to server 'server[0]'
 
     try:
-        e = server[i].login (server_ip[i], server_user[i], ssh_key=server_key[i], quiet=True)
+        e = server[i].login (server_ip[i], server_user[i], ssh_key=server_key[i], quiet=True, port=server_port[i])
         print(server_name[i] + " connected. (" + str(i + 1) + "/" + str(numberOfServers) + ")")  
     except pxssh.ExceptionPxssh as e:
         print ("SSH session for " + server_name[i] + " failed on login.")
