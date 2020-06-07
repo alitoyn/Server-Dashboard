@@ -113,6 +113,10 @@ while 1:
 		response = input("\nWhat is IP address of the server? e.g. 192.168.X.X or myip.com\n")
 		file.write("server_ip[" + str(count) + "] = '" + response + "'\n")
 
+		# get server port number
+		response = input("\nWhich port would you like to use for the SSh connection? e.g. default is 22\n")
+		file.write("server_port[" + str(count) + "] = '" + response + "'\n")
+
 		# get ssh key location
 		response = input("\nWhat path to the ssh private key? e.g. /home/user/.ssh/key\n")
 		file.write("server_key[" + str(count) + "] = '" + response + "'\n")
