@@ -11,9 +11,9 @@ Utilises ssh keys to connect so no need to store passwords!
 - Show available updates (Ubuntu only)
 - Open new terminal window with ssh connection to a selected server
 - Setup Program to build config file
+- Send commands to servers
 
 **Upcoming Functionality:**
-- Send commands to servers
 - Network and CPU load graphs
 - More details on the F@H stats page
 - Password lock application
