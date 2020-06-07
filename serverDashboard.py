@@ -48,6 +48,8 @@ print ("\nSSH session login successful")
 
 # create interrupt thread --------------------------------------------------------------------------------------------------
 # needed for the interrupt thread
+
+# set the defualt landing page as the dashboard
 userInput = "d"
 
 # function that registers keyboard press in the background
@@ -162,12 +164,21 @@ while userInput != "q":
 
             # print the user options at the bottom
             termSize = z.updateTermSize()            
+            print('\n Select "0" to view load graphs\n')
             print(z.displayOptions(userInput, termSize))
+
+
             
             # break from loop if user selects an option
             # this will loop for 60 seconds before repeating the loop
             for i in range(0, 120):
                 time.sleep(0.5)
+                if userInput == '0':
+                    passedCommand = 's-tui'
+                    cmd = default_terminal + ' --command "ssh -i ' + server_key[serverSelect] + ' -p ' + server_port[serverSelect] + ' -t ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + ' ' + passedCommand + '"'
+                    os.system(cmd)
+                    userInput = 'd'
+
                 if userInput != "d":
                     break
 

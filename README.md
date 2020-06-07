@@ -17,3 +17,4 @@ Utilises ssh keys to connect so no need to store passwords!
 - Network and CPU load graphs
 - More details on the F@H stats page
 - Password lock application
+- Use application to install dependencies on connected servers
