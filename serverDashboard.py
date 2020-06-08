@@ -164,7 +164,7 @@ while userInput != "q":
 
             # print the user options at the bottom
             termSize = z.updateTermSize()            
-            print('\n Select "0" to view load graphs\n')
+            print('\n Select "0" to view processess and CPU load\n')
             print(z.displayOptions(userInput, termSize))
 
 
@@ -174,7 +174,7 @@ while userInput != "q":
             for i in range(0, 120):
                 time.sleep(0.5)
                 if userInput == '0':
-                    passedCommand = 's-tui'
+                    passedCommand = 'htop'
                     cmd = default_terminal + ' --command "ssh -i ' + server_key[serverSelect] + ' -p ' + server_port[serverSelect] + ' -t ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + ' ' + passedCommand + '"'
                     os.system(cmd)
                     userInput = 'd'
@@ -268,6 +268,7 @@ while userInput != "q":
         print("0: Shutdown")
         print("1: Reboot")
         print("2: Run Updates")
+        # print("3: Install Dependancies")
         print("")
         while userInput == "c":
             for i in range(0, 120):
@@ -285,6 +286,9 @@ while userInput != "q":
             passedCommand = 'sudo reboot'
         if(commandToSendServer == 2):     
             passedCommand = 'sudo apt upgrade && sleep 1'
+        # if (commandToSendServer == 3):
+        #     passedCommand = 'git clone https://github.com/amanusk/s-tui.git && cd s-tui &&'
+        #     # try using git instead? maybe clone all things into a folder in the home folder then 
         
         # initiate command   
         print("Opening new window...")
