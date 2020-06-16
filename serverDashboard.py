@@ -88,7 +88,6 @@ while userInput != "q":
 
         # pull data that doesn't need to be constantly updated
         # get storage data
-        # cmd = "df -h / | awk 'FNR == 2 {print $5 " (" $3 "/" $2 ")"}'"
         cmd = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
         storage = z.commandSend(server[serverSelect], cmd) #"df -h / | awk 'FNR == 2 {print $5 $2}'"
         try:
@@ -114,6 +113,18 @@ while userInput != "q":
             print('Server Information: ' + server_name[serverSelect])
             print(z.commandSend(server[serverSelect], 'uptime'))
             print("")
+
+            # Try to print temperature information
+            # NEED TO FIX THIS!!! - strip the output between \x's and replace with degrees sign!
+            tempInfo = z.commandSend(server[serverSelect], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
+            if tempInfo[0] == 'P':
+                print(' Package temperature:')
+                print(' ' + tempInfo)
+                print("")
+            else:
+                print(' Package temperature:')
+                print(' Please install dependancies to see temperature')
+                print("")
             
             # storage data
             print(" Storage:")
