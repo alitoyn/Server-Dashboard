@@ -288,13 +288,19 @@ while userInput != "q":
         if(commandToSendServer == 2):     
             passedCommand = 'sudo apt upgrade && sleep 1'
         if (commandToSendServer == 3):
-            passedCommand = "'sudo apt install lm-sensors; echo ''; echo 'Press ENTER for all default options, any others are used at your own risk...'; echo ''; sleep 2; sudo sensors-detect; echo ''; echo 'installation successfull! Window closing...'; sleep 2 '"
-            # passedCommand_2 = 'sudo sensor-detect'
-            # cat commands-to-execute-remotely.sh | ssh blah_server
 
+            # These are the programs to install
+            # need to be seperated by spaces
+            programsToInstall = 'lm-sensors'
 
-            # THIS SEEMS TO WORK!!! REPLICATE THIS!!!!
-            # ssh -t ali@alitoyn.com 'sudo apt install lm-sensors; sudo sensors-detect'
+            # These are any additional commands that need to be run
+            # need to be seperated by ';'
+            commandsToRun = 'sudo sensors-detect'
+
+            # This is the command sent to the server
+            # Only change this if the UI of the install needs updating, otherwise use the above two options!
+            passedCommand = "'sudo apt install " + programsToInstall + "; echo ''; echo 'Press ENTER for all default options, any others are used at your own risk...'; echo ''; sleep 2; " + commandsToRun + "; echo ''; echo 'installation successfull! Window closing...'; sleep 2 '"
+
         
         # initiate command   
         print("Opening new window...")
