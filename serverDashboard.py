@@ -333,6 +333,7 @@ while userInput != "q":
         print("0: updates")
         print("1: storage")
         print("2: uptime")
+        print("3: CPU temps")
 
         while userInput == "o":
             for i in range(0, 120):
@@ -403,6 +404,24 @@ while userInput != "q":
 
                 print(z.commandSend(server[i], 'uptime'))
                 print("")
+
+        # print temp overview
+        if choice == "3":
+            os.system('clear')
+            print("Loading temp details...\n")
+            
+            for i in range(numberOfServers):
+                print(server_name[i] + " :")
+
+                tempInfo = z.commandSend(server[i], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
+                if tempInfo[0] == 'P':
+                    print(' Package temperature:')
+                    print(' ' + tempInfo)
+                    print("")
+                else:
+                    print(' Package temperature:')
+                    print(' Please install dependancies to see temperature')
+                    print("")
 
         # print the user options
         termSize = z.updateTermSize()
