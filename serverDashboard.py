@@ -268,7 +268,7 @@ while userInput != "q":
         print("0: Shutdown")
         print("1: Reboot")
         print("2: Run Updates")
-        # print("3: Install Dependancies")
+        print("3: Install Dependancies")
         print("")
         while userInput == "c":
             for i in range(0, 120):
@@ -277,6 +277,7 @@ while userInput != "q":
                     break
 
         commandToSendServer = int(userInput)
+        passedCommand_2 = 0
         userInput = "c"
 
         # set command
@@ -286,15 +287,26 @@ while userInput != "q":
             passedCommand = 'sudo reboot'
         if(commandToSendServer == 2):     
             passedCommand = 'sudo apt upgrade && sleep 1'
-        # if (commandToSendServer == 3):
-        #     passedCommand = 'git clone https://github.com/amanusk/s-tui.git && cd s-tui &&'
-        #     # try using git instead? maybe clone all things into a folder in the home folder then 
+        if (commandToSendServer == 3):
+            passedCommand = "'sudo apt install lm-sensors; echo ''; echo 'Press ENTER for all default options, any others are used at your own risk...'; echo ''; sleep 2; sudo sensors-detect; echo ''; echo 'installation successfull! Window closing...'; sleep 2 '"
+            # passedCommand_2 = 'sudo sensor-detect'
+            # cat commands-to-execute-remotely.sh | ssh blah_server
+
+
+            # THIS SEEMS TO WORK!!! REPLICATE THIS!!!!
+            # ssh -t ali@alitoyn.com 'sudo apt install lm-sensors; sudo sensors-detect'
         
         # initiate command   
         print("Opening new window...")
-        cmd = default_terminal + ' --command "ssh -i ' + server_key[serverToSendCommand] + ' -p ' + server_port[serverToSendCommand] + ' -t ' + server_user[serverToSendCommand] + '@' + server_ip[serverToSendCommand] + ' ' + passedCommand + '"'
-        os.system(cmd)
+        cmd = default_terminal + ' --command "ssh -t -i ' + server_key[serverToSendCommand] + ' -p ' + server_port[serverToSendCommand] + ' -t ' + server_user[serverToSendCommand] + '@' + server_ip[serverToSendCommand] + ' ' + passedCommand + '"'
+        output = os.system(cmd)
         time.sleep(1)
+
+        # if passedCommand_2 != 0:
+        #     cmd = default_terminal + ' --command "ssh -i ' + server_key[serverToSendCommand] + ' -p ' + server_port[serverToSendCommand] + ' -t ' + server_user[serverToSendCommand] + '@' + server_ip[serverToSendCommand] + ' ' + passedCommand_2 + '"'
+        #     output = os.system(cmd)
+        #     time.sleep(1)
+
         userInput = "d"
 
     if userInput == 'o':
