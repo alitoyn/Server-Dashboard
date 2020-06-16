@@ -14,11 +14,11 @@ Utilises ssh keys to connect so no need to store passwords!
 * Open new terminal window with ssh connection to a selected server
 * Setup Program to build config file
 * Send commands to servers
+* Use application to install dependencies on connected servers
 
 **Upcoming Functionality:**
 
 * Network and CPU load graphs
 * More details on the F@H stats page
 * Password lock application
-* Use application to install dependencies on connected servers
 * CPU Temp readouts
