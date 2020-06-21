@@ -1,12 +1,6 @@
-# TO DO - consider looking at pulseway for further ideas
-
-# - password protect application?
-
-# folding additions:
-#   - predict how long is left?
-
 from pexpect import pxssh       # used for ssh connection
 import functions as z        # import all functions written for this program
+from Functions import setupFunctions, foldingFunctions
 import sys, time, os, threading, getch # other libraries
 
 # get config info ----------------------------------------------------------------------------------------------------------
@@ -21,7 +15,7 @@ except ImportError:
     sys.exit(0)
 
 # get the most up to date folding data for the user
-z.getFoldingData(foldingUserID)
+foldingFunctions.dailyDownloadFoldingUserData(foldingUserID)
 fData = z.foldingXmlParse()
 
 
@@ -175,7 +169,7 @@ while userInput != "q":
 
             # print the user options at the bottom
             termSize = z.updateTermSize()            
-            print('\n Select "0" to view processess and CPU load\n')
+            print(' Select "0" to view processess and CPU load\n')
             print(z.displayOptions(userInput, termSize))
 
 

@@ -21,4 +21,6 @@ Utilises ssh keys to connect so no need to store passwords!
 
 * Network and CPU load graphs
 * More details on the F@H stats page
-* Password lock application	
+* Password lock application
+* Check for updates and install them
+* Install python dependencies from setup.py
