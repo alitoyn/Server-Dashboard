@@ -7,7 +7,7 @@ import sys, time, os, threading, getch # other libraries
 
 # Attempt to import server data from file if it exists
 try:
-    from config import *        #import all data from the config file
+    from config import *        # import all data from the config file
     print("Config file found...")
 except ImportError:
     print("No config file found")
@@ -16,29 +16,12 @@ except ImportError:
 
 # get the most up to date folding data for the user
 foldingFunctions.dailyDownloadFoldingUserData(foldingUserID)
-fData = z.foldingXmlParse()
-
+foldingData = foldingFunctions.foldingXmlParse()
 
 # connect via ssh ----------------------------------------------------------------------------------------------------------
 
 # connect to all servers
-numberOfServers = len(server_name)
-
-server = {} # this list holds the ssh connections
-
-print("\nConnect to servers...")
-for i in range(numberOfServers):
-    server[i] = pxssh.pxssh() # connect to server 'server[0]'
-
-    try:
-        e = server[i].login (server_ip[i], server_user[i], ssh_key=server_key[i], quiet=True, port=server_port[i])
-        print(server_name[i] + " connected. (" + str(i + 1) + "/" + str(numberOfServers) + ")")  
-    except pxssh.ExceptionPxssh as e:
-        print ("SSH session for " + server_name[i] + " failed on login.")
-        print (str(server[i]))
-        # sys.exit() # exit program for failed ssh attempt
-
-print ("\nSSH session login successful")
+serverSshConnections = setupFunctions.connectToServers()
 
 # create interrupt thread --------------------------------------------------------------------------------------------------
 # needed for the interrupt thread
@@ -83,16 +66,16 @@ while userInput != "q":
         # pull data that doesn't need to be constantly updated
         # get storage data
         cmd = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
-        storage = z.commandSend(server[serverSelect], cmd) #"df -h / | awk 'FNR == 2 {print $5 $2}'"
+        storage = z.commandSend(serverSshConnections[serverSelect], cmd) #"df -h / | awk 'FNR == 2 {print $5 $2}'"
         try:
-            storage2 = z.commandSend(server[serverSelect], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'")
+            storage2 = z.commandSend(serverSshConnections[serverSelect], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'")
             add_stor_flag = 1
         except:
             add_stor_flag = 0
 
         #get update data
         try:
-            updates = z.commandSend(server[serverSelect], 'apt-get upgrade --dry-run | grep "newly install"')
+            updates = z.commandSend(serverSshConnections[serverSelect], 'apt-get upgrade --dry-run | grep "newly install"')
             update_flag = 1
         except:
             updates = "Failed to get data"
@@ -105,12 +88,12 @@ while userInput != "q":
             
             # server name and uptime
             print('Server Information: ' + server_name[serverSelect])
-            print(z.commandSend(server[serverSelect], 'uptime'))
+            print(z.commandSend(serverSshConnections[serverSelect], 'uptime'))
             print("")
 
             # Try to print temperature information
             # NEED TO FIX THIS!!! - strip the output between \x's and replace with degrees sign!
-            tempInfo = z.commandSend(server[serverSelect], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
+            tempInfo = z.commandSend(serverSshConnections[serverSelect], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
             if tempInfo[0] == 'P':
                 print(' Package temperature:')
                 print(' ' + tempInfo)
@@ -144,7 +127,7 @@ while userInput != "q":
             print(" Folding Status:")
             # pull last line from folding log file and save it as variable
             try:
-                foldingLog = z.foldingParse(z.commandSend(server[serverSelect], 'tail -1 /var/lib/fahclient/log.txt'))
+                foldingLog = z.foldingParse(z.commandSend(serverSshConnections[serverSelect], 'tail -1 /var/lib/fahclient/log.txt'))
                 print(" " + foldingLog + " ", end='')
 
                 try:
@@ -162,7 +145,7 @@ while userInput != "q":
                     break
                 try:
                     print(" " + extra_logfile_name[serverSelect][i] + ":")
-                    print(" " + z.commandSend(server[serverSelect], 'tail -1 ' + extra_logfile_location[serverSelect][i] ))
+                    print(" " + z.commandSend(serverSshConnections[serverSelect], 'tail -1 ' + extra_logfile_location[serverSelect][i] ))
                     print("")
                 except:
                     pass
@@ -214,20 +197,20 @@ while userInput != "q":
             termSize = z.updateTermSize()
             os.system('clear')
             print(z.getScreenDivider("User Info", termSize[1]))
-            print("User Name: ", fData.User_Name.get_text())
-            print("Rank Change (24hrs):", fData.user.Change_Rank_24hr.get_text())
+            print("User Name: ", foldingData.User_Name.get_text())
+            print("Rank Change (24hrs):", foldingData.user.Change_Rank_24hr.get_text())
             print("")
-            print("Points Today:", fData.user.Points_Today.get_text())
+            print("Points Today:", foldingData.user.Points_Today.get_text())
             print("")
-            print("Points Last 24hrs:", fData.user.Points_Last_24hr.get_text())
-            print("Points 24hrs Average:", fData.user.Points_24hr_Avg.get_text())
+            print("Points Last 24hrs:", foldingData.user.Points_Last_24hr.get_text())
+            print("Points 24hrs Average:", foldingData.user.Points_24hr_Avg.get_text())
             print("")
             print(z.getScreenDivider("Server Info", termSize[1]))
             for i in range (numberOfServers):
                 print(server_name[i] + " :")
                 
                 try:
-                    foldingLog = z.foldingParse(z.commandSend(server[i], 'tail -1 /var/lib/fahclient/log.txt'))
+                    foldingLog = z.foldingParse(z.commandSend(serverSshConnections[i], 'tail -1 /var/lib/fahclient/log.txt'))
                     print(" " + foldingLog + " ", end='')
 
                     try:
@@ -348,7 +331,7 @@ while userInput != "q":
                 
                 #get update data
                 try:
-                    updates = z.commandSend(server[i], 'apt-get upgrade --dry-run | grep "newly install"')
+                    updates = z.commandSend(serverSshConnections[i], 'apt-get upgrade --dry-run | grep "newly install"')
                     update_flag = 1
                 except:
                     updates = "Failed to get data"
@@ -407,7 +390,7 @@ while userInput != "q":
             for i in range(numberOfServers):
                 print(server_name[i] + " :")
 
-                tempInfo = z.commandSend(server[i], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
+                tempInfo = z.commandSend(serverSshConnections[i], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
                 if tempInfo[0] == 'P':
                     print(' Package temperature:')
                     print(' ' + tempInfo)
@@ -459,5 +442,5 @@ while userInput != "q":
 
 # logout of all servers
 for i in range(numberOfServers):
-    server[i].logout()
+    serverSshConnections[i].logout()
 

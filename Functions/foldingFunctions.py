@@ -36,3 +36,15 @@ def appendDateToFoldingData(foldingXML):
 	import datetime
 	with open(foldingXML, "a") as myfile:
 			myfile.write(str(datetime.datetime.today().day))
+
+def foldingXmlParse():
+	try:
+		# import beautiful soup - for parsing information
+		from bs4 import BeautifulSoup
+		# use BS to parse the data
+		with open("foldingStats.xml") as filePointer:
+			data = BeautifulSoup(filePointer, "xml")
+		# pass this data back to the main funciton
+		return data
+	except:		
+		print("Folding Stats data parse failed")
