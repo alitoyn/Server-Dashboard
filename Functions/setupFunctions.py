@@ -16,7 +16,16 @@ def connectToServers():
 	    except pxssh.ExceptionPxssh as e:
 	        print ("SSH session for " + config.server_name[i] + " failed on login.")
 	        print (str(serverSshConnections[i]))
-	        # sys.exit() # exit program for failed ssh attempt
 
 	print ("\nSSH session login successful")
 	return serverSshConnections
+
+
+def interrupt():
+    global screenToDisplay
+    while screenToDisplay != "q":
+        keystrk = input()
+        # thread doesn't continue until key is pressed
+        screenToDisplay = keystrk
+        if keystrk == "q":
+            print("Exiting...")

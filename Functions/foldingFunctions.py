@@ -1,8 +1,6 @@
 # folding functions
-
 def dailyDownloadFoldingUserData(id):
 	import datetime, os
-	#find out if file exists and save the last line
 	
 	dateOfDownload = wasFoldingDataDownloadedToday('foldingStats.xml')
 
@@ -37,6 +35,8 @@ def appendDateToFoldingData(foldingXML):
 	with open(foldingXML, "a") as myfile:
 			myfile.write(str(datetime.datetime.today().day))
 
+
+
 def foldingXmlParse():
 	try:
 		# import beautiful soup - for parsing information
@@ -48,3 +48,32 @@ def foldingXmlParse():
 		return data
 	except:		
 		print("Folding Stats data parse failed")
+
+def getFoldingLogData(connectedServer):
+	from Functions import dataFunctions, displayFunctions
+
+	bashCommandToGetFoldingData = 'tail -1 /var/lib/fahclient/log.txt'
+
+
+	try:
+		# print('before foldingLog command')
+		foldingLog = foldingLogParse(dataFunctions.commandSend(connectedServer, bashCommandToGetFoldingData))
+		# print('made it past foldingLog')
+		percentageFolded = int(foldingLog.split('(')[-1].split('%')[0])
+
+		try:
+			percentBar = displayFunctions.createPercentBar("#", percentageFolded, 20)
+		except:
+			percentBar = ''
+    
+	except:
+		foldingLog = " Log file parse failed"
+		percentBar = ''
+
+	output = ' ' + foldingLog + ' ' +  percentBar + '\n'
+    
+	return output
+
+def foldingLogParse(data):
+	data = data.split(":")
+	return(str(data[len(data) - 1]))

@@ -1,11 +1,11 @@
 from pexpect import pxssh       # used for ssh connection
 import functions as z        # import all functions written for this program
-from Functions import setupFunctions, foldingFunctions
+from Functions import setupFunctions, foldingFunctions, displayFunctions
 import sys, time, os, threading, getch # other libraries
 
-# get config info ----------------------------------------------------------------------------------------------------------
 
 # Attempt to import server data from file if it exists
+# TODO there must be a way to turn this into a function?
 try:
     from config import *        # import all data from the config file
     print("Config file found...")
@@ -14,189 +14,105 @@ except ImportError:
     print("Confirm the file 'local_data.py' exists...")
     sys.exit(0)
 
-# get the most up to date folding data for the user
+
 foldingFunctions.dailyDownloadFoldingUserData(foldingUserID)
 foldingData = foldingFunctions.foldingXmlParse()
 
-# connect via ssh ----------------------------------------------------------------------------------------------------------
 
-# connect to all servers
 serverSshConnections = setupFunctions.connectToServers()
 
-# create interrupt thread --------------------------------------------------------------------------------------------------
-# needed for the interrupt thread
 
 # set the defualt landing page as the dashboard
-userInput = "d"
+screenToDisplay = "d"
 
 # function that registers keyboard press in the background
 # doesn't like being in the functions file
+# TODO find way to work without this or move it to another file
 def interrupt():
-    global userInput
-    while userInput != "q":
+    global screenToDisplay
+    while screenToDisplay != "q":
         keystrk = input()
         # thread doesn't continue until key is pressed
-        userInput = keystrk
+        screenToDisplay = keystrk
         if keystrk == "q":
             print("Exiting...")
 
-# display region ------------------------------------------------------------------------------------------------------
 
 # start the interrupt thread
 inter = threading.Thread(target=interrupt)
 inter.start()
 
+
 # set the default rows, columns for terminal
-termSize = [24, 80] # rows, columns
-
-# this is the server shown by default
-# can be changed by the "Server Select" screen
-serverSelect = 0
-
-while userInput != "q":
-    # update current rows and columns of the terminal 
-    # rows, columns = os.popen('stty size', 'r').read().split()
-    termSize = z.updateTermSize()
-
-    # main page
-    if userInput == "d":
-        # prompt the user that something is happening
-        print("\nLoading...\n")
-
-        # pull data that doesn't need to be constantly updated
-        # get storage data
-        cmd = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
-        storage = z.commandSend(serverSshConnections[serverSelect], cmd) #"df -h / | awk 'FNR == 2 {print $5 $2}'"
-        try:
-            storage2 = z.commandSend(serverSshConnections[serverSelect], "df -h " + additional_storage[serverSelect] + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'")
-            add_stor_flag = 1
-        except:
-            add_stor_flag = 0
-
-        #get update data
-        try:
-            updates = z.commandSend(serverSshConnections[serverSelect], 'apt-get upgrade --dry-run | grep "newly install"')
-            update_flag = 1
-        except:
-            updates = "Failed to get data"
-            update_flag = 0       
-
-        # clear terminal screen and start to display data
-        while userInput == "d":
-            # clear the screen
-            os.system('clear')
-            
-            # server name and uptime
-            print('Server Information: ' + server_name[serverSelect])
-            print(z.commandSend(serverSshConnections[serverSelect], 'uptime'))
-            print("")
-
-            # Try to print temperature information
-            # NEED TO FIX THIS!!! - strip the output between \x's and replace with degrees sign!
-            tempInfo = z.commandSend(serverSshConnections[serverSelect], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
-            if tempInfo[0] == 'P':
-                print(' Package temperature:')
-                print(' ' + tempInfo)
-                print("")
-            else:
-                print(' Package temperature:')
-                print(' Please install dependancies to see temperature')
-                print("")
-            
-            # storage data
-            print(" Storage:")
-            print(' Root Directory / = ' + storage + " ", end="")                                 
-            z.percentBar("#", int(storage.split("%")[0]), 20)
-            print("")
-
-            # try to print additional storage if it has been input otherwise pass over
-            if add_stor_flag == 1:
-                print(' Additional Storage = ' + storage2 + " ", end="")
-                z.percentBar("#", int(storage2.split("%")[0]), 20)
-                print("")
-
-            # try to print availble updates
-            if update_flag == 1:                
-                print(" Update status:\n " + updates.split(' ')[0] + " packages to update")
-                print("")
-            else:
-                print(" Update status:\n " + updates)
-                print("")
-            
-            # print folding data - last line of the log file
-            print(" Folding Status:")
-            # pull last line from folding log file and save it as variable
-            try:
-                foldingLog = z.foldingParse(z.commandSend(serverSshConnections[serverSelect], 'tail -1 /var/lib/fahclient/log.txt'))
-                print(" " + foldingLog + " ", end='')
-
-                try:
-                    # the funky code here pulls out the percent from the log file line
-                    z.percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
-                except:
-                    print("")
-            except:
-                print(" Log file parse failed")
-            print("")
-
-            # try to print data from the additional log file
-            for i in range(len(extra_logfile_name[serverSelect])):
-                if extra_logfile_name[serverSelect][i] == 0:
-                    break
-                try:
-                    print(" " + extra_logfile_name[serverSelect][i] + ":")
-                    print(" " + z.commandSend(serverSshConnections[serverSelect], 'tail -1 ' + extra_logfile_location[serverSelect][i] ))
-                    print("")
-                except:
-                    pass
-
-            # print the user options at the bottom
-            termSize = z.updateTermSize()            
-            print(' Select "0" to view processess and CPU load\n')
-            print(z.displayOptions(userInput, termSize))
+terminalSize = [24, 80] # rows, columns
 
 
-            
-            # break from loop if user selects an option
-            # this will loop for 60 seconds before repeating the loop
-            for i in range(0, 120):
-                time.sleep(0.5)
-                if userInput == '0':
-                    passedCommand = 'htop'
-                    cmd = default_terminal + ' --command "ssh -i ' + server_key[serverSelect] + ' -p ' + server_port[serverSelect] + ' -t ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + ' ' + passedCommand + '"'
-                    os.system(cmd)
-                    userInput = 'd'
+defaultServerToDisplay = 0
+selectedServer = defaultServerToDisplay
 
-                if userInput != "d":
-                    break
+serverSelectScreen = 's'
+dashboardScreen = 'd'
+foldingScreen = 'f'
+sendCommandScreen = 's'
+newSshWindowScreen = 'n'
+quitProgram = 'q'
+
+
+while screenToDisplay != quitProgram:
+
+    terminalSize = displayFunctions.updateTermSize()
+
+    
+    if screenToDisplay == dashboardScreen:
+        displayFunctions.displayDashboard(serverSshConnections[selectedServer], selectedServer)
+
+        terminalSize = displayFunctions.updateTermSize()            
+        print(' Select "0" to view processess and CPU load\n')
+        print(z.displayOptions(screenToDisplay, terminalSize))
+
+
+        
+        # break from loop if user selects an option
+        # this will loop for 60 seconds before repeating the loop
+        for i in range(0, 120):
+            time.sleep(0.5)
+            if screenToDisplay == '0':
+                passedCommand = 'htop'
+                cmd = default_terminal + ' --command "ssh -i ' + server_key[selectedServer] + ' -p ' + server_port[selectedServer] + ' -t ' + server_user[selectedServer] + '@' + server_ip[selectedServer] + ' ' + passedCommand + '"'
+                os.system(cmd)
+                screenToDisplay = 'd'
+
+            if screenToDisplay != "d":
+                break
+
 
     # server select page
-    if userInput == "s":
-        # change the userinput to allow the user to choose new one
+    if screenToDisplay == "s":
+        # change the screenToDisplay to allow the user to choose new one
         # display info
         os.system('clear')
         print("Select which server to show details for:")
-        for i in range(numberOfServers):
+        for i in range(len(server_name)):
             print(str(i) + ": " + server_name[i])
         # print("\nSelection: ", end='')
 
-        while userInput == "s":
+        while screenToDisplay == "s":
             for i in range(0, 120):
                 time.sleep(0.5)
-                if userInput != "s":
+                if screenToDisplay != "s":
                     break
         
-        serverSelect = int(userInput)
+        selectedServer = int(screenToDisplay)
         # go back to main screen
-        userInput = "d"
+        screenToDisplay = "d"
 
     # folding page                
-    if userInput == "f":
+    if screenToDisplay == "f":
 
-        while userInput == "f":
-            termSize = z.updateTermSize()
+        while screenToDisplay == "f":
+            terminalSize = z.updateTermSize()
             os.system('clear')
-            print(z.getScreenDivider("User Info", termSize[1]))
+            print(z.getScreenDivider("User Info", terminalSize[1]))
             print("User Name: ", foldingData.User_Name.get_text())
             print("Rank Change (24hrs):", foldingData.user.Change_Rank_24hr.get_text())
             print("")
@@ -205,8 +121,8 @@ while userInput != "q":
             print("Points Last 24hrs:", foldingData.user.Points_Last_24hr.get_text())
             print("Points 24hrs Average:", foldingData.user.Points_24hr_Avg.get_text())
             print("")
-            print(z.getScreenDivider("Server Info", termSize[1]))
-            for i in range (numberOfServers):
+            print(z.getScreenDivider("Server Info", terminalSize[1]))
+            for i in range (len(server_name)):
                 print(server_name[i] + " :")
                 
                 try:
@@ -224,33 +140,33 @@ while userInput != "q":
                     print("")
 
             # print the user options
-            print(z.displayOptions(userInput, termSize))
+            print(z.displayOptions(screenToDisplay, terminalSize))
             
             # break from loop if user selects an option
             # this will loop for 60 seconds before repeating the loop
             for i in range(0, 120):
                 time.sleep(0.5)
-                if userInput != "f":
+                if screenToDisplay != "f":
                     break
 
     # send command page
-    if userInput == "c":
+    if screenToDisplay == "c":
         # display info
         os.system('clear')
         print("\nThis is currently for show and does nothing\n")
         print("Which server do you want to send a command:")
-        for i in range(numberOfServers):
+        for i in range(len(server_name)):
             print(str(i) + ": " + server_name[i])
         print("")
 
-        while userInput == "c":
+        while screenToDisplay == "c":
             for i in range(0, 120):
                 time.sleep(0.5)
-                if userInput != "c":
+                if screenToDisplay != "c":
                     break
         
-        serverToSendCommand = int(userInput)
-        userInput = "c"
+        serverToSendCommand = int(screenToDisplay)
+        screenToDisplay = "c"
 
         print("\nChoose command to send to " + server_name[serverToSendCommand])
         print("0: Shutdown")
@@ -258,15 +174,15 @@ while userInput != "q":
         print("2: Run Updates")
         print("3: Install Dependancies")
         print("")
-        while userInput == "c":
+        while screenToDisplay == "c":
             for i in range(0, 120):
                 time.sleep(0.5)
-                if userInput != "c":
+                if screenToDisplay != "c":
                     break
 
-        commandToSendServer = int(userInput)
+        commandToSendServer = int(screenToDisplay)
         passedCommand_2 = 0
-        userInput = "c"
+        screenToDisplay = "c"
 
         # set command
         if(commandToSendServer == 0):
@@ -301,9 +217,9 @@ while userInput != "q":
         #     output = os.system(cmd)
         #     time.sleep(1)
 
-        userInput = "d"
+        screenToDisplay = "d"
 
-    if userInput == 'o':
+    if screenToDisplay == 'o':
         # display info
         os.system('clear')
         print("Select which option to show details for:\n")
@@ -312,21 +228,21 @@ while userInput != "q":
         print("2: uptime")
         print("3: CPU temps")
 
-        while userInput == "o":
+        while screenToDisplay == "o":
             for i in range(0, 120):
                 time.sleep(0.5)
-                if userInput != "o":
+                if screenToDisplay != "o":
                     break
         
-        choice = userInput
-        userInput = 'o'
+        choice = screenToDisplay
+        screenToDisplay = 'o'
 
         # print update overview
         if choice == "0":
             os.system('clear')
             print("Loading update details...\n")
             
-            for i in range(numberOfServers):
+            for i in range(len(server_name)):
                 print(server_name[i] + " :")
                 
                 #get update data
@@ -350,7 +266,7 @@ while userInput != "q":
             os.system('clear')
             print("Loading storage details...\n")
             
-            for i in range(numberOfServers):
+            for i in range(len(server_name)):
                 print(server_name[i] + " :")
 
                 cmd = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
@@ -376,7 +292,7 @@ while userInput != "q":
             os.system('clear')
             print("Loading uptime details...\n")
             
-            for i in range(numberOfServers):
+            for i in range(len(server_name)):
                 print(server_name[i] + " :")
 
                 print(z.commandSend(server[i], 'uptime'))
@@ -387,7 +303,7 @@ while userInput != "q":
             os.system('clear')
             print("Loading temp details...\n")
             
-            for i in range(numberOfServers):
+            for i in range(len(server_name)):
                 print(server_name[i] + " :")
 
                 tempInfo = z.commandSend(serverSshConnections[i], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
@@ -401,8 +317,8 @@ while userInput != "q":
                     print("")
 
         # print the user options
-        termSize = z.updateTermSize()
-        print(z.displayOptions(userInput, termSize))
+        terminalSize = z.updateTermSize()
+        print(z.displayOptions(screenToDisplay, terminalSize))
 
         print("\nInput 'r' to reset and choose another overview")
 
@@ -410,37 +326,37 @@ while userInput != "q":
         # this will loop for 60 seconds before repeating the loop
         while 1:
            time.sleep(0.5)
-           if userInput != "o" or userInput == "r":
-                if userInput == "r":
-                    userInput = "o"
+           if screenToDisplay != "o" or screenToDisplay == "r":
+                if screenToDisplay == "r":
+                    screenToDisplay = "o"
                 break
 
     # new ssh window page
-    if userInput == "n":
-        # change the userinput to allow the user to choose new one
+    if screenToDisplay == "n":
+        # change the screenToDisplay to allow the user to choose new one
 
         # display info
         os.system('clear')
         print("Which server would you like to open a conneciton with:")
-        for i in range(numberOfServers):
+        for i in range(len(server_name)):
             print(str(i) + ": " + server_name[i])
 
-        while userInput == "n":
+        while screenToDisplay == "n":
             for i in range(0, 120):
                 time.sleep(0.5)
-                if userInput != "n":
+                if screenToDisplay != "n":
                     break
 
-        serverSelect = int(userInput)
+        selectedServer = int(screenToDisplay)
 
         print("Opening new window...")
-        cmd = default_terminal + ' --command "ssh -i ' + server_key[serverSelect] + ' -p ' + server_port[serverSelect] + ' ' + server_user[serverSelect] + '@' + server_ip[serverSelect] + '"'
+        cmd = default_terminal + ' --command "ssh -i ' + server_key[selectedServer] + ' -p ' + server_port[selectedServer] + ' ' + server_user[selectedServer] + '@' + server_ip[selectedServer] + '"'
         os.system(cmd)
 
         # go back to main screen
-        userInput = "d"
+        screenToDisplay = "d"
 
 # logout of all servers
-for i in range(numberOfServers):
+for i in range(len(server_name)):
     serverSshConnections[i].logout()
 
