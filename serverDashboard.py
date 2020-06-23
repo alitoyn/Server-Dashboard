@@ -1,7 +1,7 @@
 from pexpect import pxssh       # used for ssh connection
 import functions as z        # import all functions written for this program
 from Functions import controlFunctions, foldingFunctions, displayFunctions
-from screens import dashboard
+from screens import dashboard, selectServer
 import sys, time, os, threading, getch # other libraries
 
 
@@ -61,50 +61,33 @@ selectedScreen = dashboardScreen
 
 while selectedScreen != quitProgram:
 
+    skipDisplayOptions = False
+
     terminalSize = displayFunctions.updateTermSize()
 
     
     if selectedScreen == dashboardScreen:
         dashboard.displayDashboard(serverSshConnections[selectedServer], selectedServer)
         
-               
 
-      
     if selectedScreen == serverSelectScreen:
+        selectedServer = selectServer.userSelectServer()
+        
+        selectedScreen = dashboardScreen
 
-        selectedServer = displayFunctions.userSelectServer(server_name)
-
+        skipDisplayOptions = True
 
     # NOTE WHILE REFACTORING
     # This needs to go at the bottom
-    print(displayFunctions.createDisplayOptions(selectedScreen))
-
-    userInput = controlFunctions.getUserInput()
+    if not skipDisplayOptions:
+        print(displayFunctions.createDisplayOptions(selectedScreen))
+        userInput = controlFunctions.getUserInput()
     
-    if userInput == '0':
-        displayFunctions.launchProcessesView(serverSshConnections[selectedServer], selectedServer)
-    else:
-        selectedScreen = userInput
+        if userInput == '0':
+            displayFunctions.launchProcessesView(serverSshConnections[selectedServer], selectedServer)
+        else:
+            selectedScreen = userInput
 
-    # # server select page
-    # if selectedScreen == "s":
-    #     # change the selectedScreen to allow the user to choose new one
-    #     # display info
-    #     os.system('clear')
-    #     print("Select which server to show details for:")
-    #     for i in range(len(server_name)):
-    #         print(str(i) + ": " + server_name[i])
-    #     # print("\nSelection: ", end='')
-
-    #     while selectedScreen == "s":
-    #         for i in range(0, 120):
-    #             time.sleep(0.5)
-    #             if selectedScreen != "s":
-    #                 break
-        
-    #     selectedServer = int(selectedScreen)
-    #     # go back to main screen
-    #     selectedScreen = "d"
 
     # # folding page                
     # if selectedScreen == "f":
