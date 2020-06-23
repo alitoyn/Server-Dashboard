@@ -11,46 +11,7 @@ def updateTermSize():
 	except:
 		return [defaultRows, defualtColumns]
 
-def displayDashboard(sshConnection, selectedServer):
-	import config
-	from Functions import dataFunctions, foldingFunctions
-
-	currentScreen = 'd'
-
-	print("\nLoading...\n")
-
-	# These commands above the clear take some time so better to hide them behind 'loading'
-	rootStorage = dataFunctions.getRootStorage(sshConnection)
-	additionalStorage = dataFunctions.getAdditionalStorage(config.additional_storage[selectedServer], sshConnection)
-
-	updates = dataFunctions.getUpdateData(sshConnection)
 	
-
-	clearTerminal()
-
-	print('Server Information: ' + config.server_name[selectedServer])
-
-	serverUptime = dataFunctions.getUptime(sshConnection)
-	print(serverUptime + '\n')
-
-	serverTempInfo = dataFunctions.getTempInfo(sshConnection)
-	print(serverTempInfo)
-	
-	printStorageData(rootStorage, additionalStorage)
-
-	printUpdateData(updates)    
-
-	foldingLogData = foldingFunctions.getFoldingLogData(sshConnection)
-	printFoldingData(foldingLogData)
-		
-	numberOfLogFiles = dataFunctions.getNumberOfLogFiles(config.extra_logfile_name[selectedServer])
-
-	if numberOfLogFiles != 0:
-		for i in range(numberOfLogFiles):
-			printLogFiles(sshConnection, config.extra_logfile_name[selectedServer][i], config.extra_logfile_location[selectedServer][i])
-
-
-		
 
 def clearTerminal():
 	import os
@@ -117,25 +78,56 @@ def printLogFiles(sshConnection, logfileName, logfileLocation):
 		print(" Logfile parse failed")
 	print("")
 
-def displayOptions(currentScreen, size):
-	options = [
+def createDisplayOptions(currentScreen):
+	terminalSize = updateTermSize()
+
+	screenOptions = [
 		"s: Server Select", 
 		"d: Dashboard",
 		"o: Overview",
 		"f: Folding Details", 
 		"c: Send Command", 
 		"n: New SSH Window",
-		"q: Quit"
-		
+		"q: Quit"	
 	]
 
-	output = getScreenDivider("Options", size[1])
-	limit = 3
-	for i in range(len(options)):
-		if currentScreen != options[i][0]:
-			output = output + options[i]
-			if options[i][0] != "q":
+	output = getScreenDivider("Options", terminalSize[1])
+	limitPerRow = 3
+	numberOfScreenOptions = len(screenOptions)
+	count = 0
+
+	for i in range(numberOfScreenOptions):
+
+		if currentScreen != screenOptions[i][0]:
+			output = output + screenOptions[i]
+			
+			# if the option is not the last one,
+			# then add the deliminator
+			if screenOptions[i][0] != "q":
 				output = output + " | "
-		if i == 3:
+		
+		if count == limitPerRow:
 			output = output + "\n"
+			count == -1
+
+		count += 1
 	return output
+
+def getScreenDivider(text, size):
+	output = text + " "
+
+	for i in range(size - len(text) - 1):
+		output = output + "-"
+	output = output + "\n"
+	return output
+
+def launchProcessesView(connectedServer, selectedServer):
+	import config, os
+	from Functions import dataFunctions
+
+	bashCommandForProcessess = 'htop'
+
+	fullBashCommand = config.default_terminal + ' --command "ssh -i ' + config.server_key[selectedServer] + ' -p ' + config.server_port[selectedServer] + ' -t ' + config.server_user[selectedServer] + '@' + config.server_ip[selectedServer] + ' ' + bashCommandForProcessess + '"'
+
+	os.system(fullBashCommand)
+

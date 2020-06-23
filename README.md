@@ -1,5 +1,7 @@
 # Server-Dashboard
 
+**Currently refactoring entire program, functionality is limited**
+
 Python program showing stats from connected servers - currently tested on servers running Ubuntu 18.04 LTS
 
 Utilises ssh keys to connect so no need to store passwords!
