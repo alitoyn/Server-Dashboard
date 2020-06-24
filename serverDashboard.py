@@ -11,6 +11,7 @@ from screens import foldingScreen as foldingScreenModule
 from screens import dashboard
 from screens import selectServer
 from screens import sendCommandModule
+from screens import newSshWindowModule
 
 try:
     from config import *        # import all data from the config file
@@ -74,6 +75,13 @@ while selectedScreen != quitProgram:
 
     elif selectedScreen == sendCommandScreen:
         sendCommandModule.getCommandAndSend()
+
+        selectedScreen = dashboardScreen
+
+        skipDisplayOptions = True
+
+    elif selectedScreen == newSshWindowScreen:
+        newSshWindowModule.newSshWindow()
 
         selectedScreen = dashboardScreen
 
@@ -207,30 +215,9 @@ while selectedScreen != quitProgram:
     #                 selectedScreen = "o"
     #             break
 
-    # # new ssh window page
-    # if selectedScreen == "n":
-    #     # change the selectedScreen to allow the user to choose new one
+    
 
-    #     # display info
-    #     os.system('clear')
-    #     print("Which server would you like to open a conneciton with:")
-    #     for i in range(len(server_name)):
-    #         print(str(i) + ": " + server_name[i])
-
-    #     while selectedScreen == "n":
-    #         for i in range(0, 120):
-    #             time.sleep(0.5)
-    #             if selectedScreen != "n":
-    #                 break
-
-    #     selectedServer = int(selectedScreen)
-
-    #     print("Opening new window...")
-    #     cmd = default_terminal + ' --command "ssh -i ' + server_key[selectedServer] + ' -p ' + server_port[selectedServer] + ' ' + server_user[selectedServer] + '@' + server_ip[selectedServer] + '"'
-    #     os.system(cmd)
-
-    #     # go back to main screen
-    #     selectedScreen = "d"
+    
 
 # logout of all servers
 print("Exiting...")

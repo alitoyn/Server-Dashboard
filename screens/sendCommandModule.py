@@ -18,7 +18,7 @@ def getCommandAndSend():
 
 	print("Which server do you want to send a command:")
 
-	displayFunctions.printServerList(config.server_name)
+	displayFunctions.printServerList()
 	chosenServerIndex = int(controlFunctions.getUserInput())
 
 	printListOfAvailableCommands(bashCommandDictionary)

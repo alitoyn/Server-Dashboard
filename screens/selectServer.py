@@ -7,7 +7,7 @@ def userSelectServer():
 
 	print('Select which server to show details for:')
 
-	displayFunctions.printServerList(config.server_name)
+	displayFunctions.printServerList()
 
 	while 1:
 
