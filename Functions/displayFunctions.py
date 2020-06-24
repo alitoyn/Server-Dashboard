@@ -131,3 +131,10 @@ def launchProcessesView(connectedServer, selectedServer):
 
 	os.system(fullBashCommand)
 
+def printServerList(listOfServerNames):
+
+	numberOfServers = len(listOfServerNames)
+
+	for i in range(numberOfServers):
+		print(str(i) + ": " + listOfServerNames[i])
+	print("\nSelection: ", end='')

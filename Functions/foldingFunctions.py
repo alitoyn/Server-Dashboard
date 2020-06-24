@@ -36,7 +36,6 @@ def appendDateToFoldingData(foldingXML):
 			myfile.write(str(datetime.datetime.today().day))
 
 
-
 def foldingXmlParse():
 	try:
 		# import beautiful soup - for parsing information
@@ -54,11 +53,9 @@ def getFoldingLogData(connectedServer):
 
 	bashCommandToGetFoldingData = 'tail -1 /var/lib/fahclient/log.txt'
 
-
 	try:
-		# print('before foldingLog command')
 		foldingLog = foldingLogParse(dataFunctions.commandSend(connectedServer, bashCommandToGetFoldingData))
-		# print('made it past foldingLog')
+
 		percentageFolded = int(foldingLog.split('(')[-1].split('%')[0])
 
 		try:

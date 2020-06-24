@@ -1,12 +1,17 @@
 from pexpect import pxssh       # used for ssh connection
 import functions as z        # import all functions written for this program
-from Functions import controlFunctions, foldingFunctions, displayFunctions
-from screens import dashboard, selectServer
 import sys, time, os, threading, getch # other libraries
 
+from Functions import controlFunctions
+from Functions import controlFunctions
+from Functions import foldingFunctions
+from Functions import displayFunctions
 
-# Attempt to import server data from file if it exists
-# TODO there must be a way to turn this into a function?
+from screens import foldingScreen as foldingScreenModule
+from screens import dashboard
+from screens import selectServer
+from screens import sendCommandModule
+
 try:
     from config import *        # import all data from the config file
     print("Config file found...")
@@ -17,52 +22,39 @@ except ImportError:
 
 
 foldingFunctions.dailyDownloadFoldingUserData(foldingUserID)
-foldingData = foldingFunctions.foldingXmlParse()
+
+# if the folding screen works then this can be deleted!
+# foldingData = foldingFunctions.foldingXmlParse()
 
 
 serverSshConnections = controlFunctions.connectToServers()
 
 
-# function that registers keyboard press in the background
-# doesn't like being in the functions file
-# TODO find way to work without this or move it to another file
-# def interrupt():
-#     global selectedScreen
-#     while selectedScreen != "q":
-#         keystrk = input()
-#         # thread doesn't continue until key is pressed
-#         selectedScreen = keystrk
-#         if keystrk == "q":
-#             print("Exiting...")
+defaultTerminalRows = 24
+defaultTerminalColumns = 80
+terminalSize = [defaultTerminalRows, defaultTerminalColumns]
 
-
-# # start the interrupt thread
-# inter = threading.Thread(target=interrupt)
-# inter.start()
-
-
-# set the default rows, columns for terminal
-terminalSize = [24, 80] # rows, columns
-
-
-defaultServerToDisplay = 0
-selectedServer = defaultServerToDisplay
 
 serverSelectScreen = 's'
 dashboardScreen = 'd'
 foldingScreen = 'f'
-sendCommandScreen = 's'
+sendCommandScreen = 'c'
 newSshWindowScreen = 'n'
 quitProgram = 'q'
 
+
 # set default screen
 selectedScreen = dashboardScreen
+
+defaultServerToDisplay = 0
+selectedServer = defaultServerToDisplay
 
 
 while selectedScreen != quitProgram:
 
     skipDisplayOptions = False
 
+    # can probably remove this after the refactor
     terminalSize = displayFunctions.updateTermSize()
 
     
@@ -70,13 +62,23 @@ while selectedScreen != quitProgram:
         dashboard.displayDashboard(serverSshConnections[selectedServer], selectedServer)
         
 
-    if selectedScreen == serverSelectScreen:
+    elif selectedScreen == serverSelectScreen:
         selectedServer = selectServer.userSelectServer()
         
         selectedScreen = dashboardScreen
 
         skipDisplayOptions = True
 
+    elif selectedScreen == foldingScreen:
+        foldingScreenModule.displayFoldingScreen(serverSshConnections)
+
+    elif selectedScreen == sendCommandScreen:
+        sendCommandModule.getCommandAndSend()
+
+        selectedScreen = dashboardScreen
+
+        skipDisplayOptions = True
+    
     # NOTE WHILE REFACTORING
     # This needs to go at the bottom
     if not skipDisplayOptions:
@@ -89,118 +91,9 @@ while selectedScreen != quitProgram:
             selectedScreen = userInput
 
 
-    # # folding page                
-    # if selectedScreen == "f":
+    
 
-    #     while selectedScreen == "f":
-    #         terminalSize = z.updateTermSize()
-    #         os.system('clear')
-    #         print(z.getScreenDivider("User Info", terminalSize[1]))
-    #         print("User Name: ", foldingData.User_Name.get_text())
-    #         print("Rank Change (24hrs):", foldingData.user.Change_Rank_24hr.get_text())
-    #         print("")
-    #         print("Points Today:", foldingData.user.Points_Today.get_text())
-    #         print("")
-    #         print("Points Last 24hrs:", foldingData.user.Points_Last_24hr.get_text())
-    #         print("Points 24hrs Average:", foldingData.user.Points_24hr_Avg.get_text())
-    #         print("")
-    #         print(z.getScreenDivider("Server Info", terminalSize[1]))
-    #         for i in range (len(server_name)):
-    #             print(server_name[i] + " :")
-                
-    #             try:
-    #                 foldingLog = z.foldingParse(z.commandSend(serverSshConnections[i], 'tail -1 /var/lib/fahclient/log.txt'))
-    #                 print(" " + foldingLog + " ", end='')
-
-    #                 try:
-    #                     # the funky code here pulls out the percent from the log file line
-    #                     z.percentBar("#", int(foldingLog.split('(')[-1].split('%')[0]), 20)
-    #                 except:
-    #                     print("")
-    #                 print("")
-    #             except:
-    #                 print(" Log file parse failed")
-    #                 print("")
-
-    #         # print the user options
-    #         print(z.displayOptions(selectedScreen, terminalSize))
-            
-    #         # break from loop if user selects an option
-    #         # this will loop for 60 seconds before repeating the loop
-    #         for i in range(0, 120):
-    #             time.sleep(0.5)
-    #             if selectedScreen != "f":
-    #                 break
-
-    # # send command page
-    # if selectedScreen == "c":
-    #     # display info
-    #     os.system('clear')
-    #     print("\nThis is currently for show and does nothing\n")
-    #     print("Which server do you want to send a command:")
-    #     for i in range(len(server_name)):
-    #         print(str(i) + ": " + server_name[i])
-    #     print("")
-
-    #     while selectedScreen == "c":
-    #         for i in range(0, 120):
-    #             time.sleep(0.5)
-    #             if selectedScreen != "c":
-    #                 break
-        
-    #     serverToSendCommand = int(selectedScreen)
-    #     selectedScreen = "c"
-
-    #     print("\nChoose command to send to " + server_name[serverToSendCommand])
-    #     print("0: Shutdown")
-    #     print("1: Reboot")
-    #     print("2: Run Updates")
-    #     print("3: Install Dependancies")
-    #     print("")
-    #     while selectedScreen == "c":
-    #         for i in range(0, 120):
-    #             time.sleep(0.5)
-    #             if selectedScreen != "c":
-    #                 break
-
-    #     commandToSendServer = int(selectedScreen)
-    #     passedCommand_2 = 0
-    #     selectedScreen = "c"
-
-    #     # set command
-    #     if(commandToSendServer == 0):
-    #         passedCommand = 'sudo shutdown'
-    #     if(commandToSendServer == 1):
-    #         passedCommand = 'sudo reboot'
-    #     if(commandToSendServer == 2):     
-    #         passedCommand = 'sudo apt upgrade && sleep 1'
-    #     if (commandToSendServer == 3):
-
-    #         # These are the programs to install
-    #         # need to be seperated by spaces
-    #         programsToInstall = 'lm-sensors'
-
-    #         # These are any additional commands that need to be run
-    #         # need to be seperated by ';'
-    #         commandsToRun = 'sudo sensors-detect'
-
-    #         # This is the command sent to the server
-    #         # Only change this if the UI of the install needs updating, otherwise use the above two options!
-    #         passedCommand = "'sudo apt install " + programsToInstall + "; echo ''; echo 'Press ENTER for all default options, any others are used at your own risk...'; echo ''; sleep 2; " + commandsToRun + "; echo ''; echo 'installation successfull! Window closing...'; sleep 2 '"
-
-        
-    #     # initiate command   
-    #     print("Opening new window...")
-    #     cmd = default_terminal + ' --command "ssh -t -i ' + server_key[serverToSendCommand] + ' -p ' + server_port[serverToSendCommand] + ' -t ' + server_user[serverToSendCommand] + '@' + server_ip[serverToSendCommand] + ' ' + passedCommand + '"'
-    #     output = os.system(cmd)
-    #     time.sleep(1)
-
-    #     # if passedCommand_2 != 0:
-    #     #     cmd = default_terminal + ' --command "ssh -i ' + server_key[serverToSendCommand] + ' -p ' + server_port[serverToSendCommand] + ' -t ' + server_user[serverToSendCommand] + '@' + server_ip[serverToSendCommand] + ' ' + passedCommand_2 + '"'
-    #     #     output = os.system(cmd)
-    #     #     time.sleep(1)
-
-    #     selectedScreen = "d"
+    
 
     # if selectedScreen == 'o':
     #     # display info
@@ -343,4 +236,28 @@ while selectedScreen != quitProgram:
 print("Exiting...")
 for i in range(len(server_name)):
     serverSshConnections[i].logout()
+
+
+
+
+
+
+
+
+# function that registers keyboard press in the background
+# doesn't like being in the functions file
+# TODO find way to work without this or move it to another file
+# def interrupt():
+#     global selectedScreen
+#     while selectedScreen != "q":
+#         keystrk = input()
+#         # thread doesn't continue until key is pressed
+#         selectedScreen = keystrk
+#         if keystrk == "q":
+#             print("Exiting...")
+
+
+# # start the interrupt thread
+# inter = threading.Thread(target=interrupt)
+# inter.start()
 

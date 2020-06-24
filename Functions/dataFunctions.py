@@ -26,11 +26,12 @@ def getRootStorage(connectedServer):
 
 def getAdditionalStorage(additionalStorageLocation, connectedServer):
 
-	bashCommandForAdditionalStorage = "df -h " + additionalStorageLocation + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
+	if additionalStorageLocation != None:
 
-	try:
+		bashCommandForAdditionalStorage = "df -h " + additionalStorageLocation + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
 		additionalStorage = commandSend(connectedServer, bashCommandForAdditionalStorage)
-	except:
+
+	else:
 		additionalStorage = None
 
 	return additionalStorage
@@ -70,7 +71,7 @@ def getTempInfo(connectedServer):
 		output += '\n'
 	else:
 		output = ' Package temperature:\n '
-		output += 'Please install dependancies to see temperature\n\n'
+		output += 'Please install dependancies to see temperature\n'
 
 	return output
 
