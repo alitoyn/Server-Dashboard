@@ -23,17 +23,15 @@ def clearTerminal():
 def printStorageData(rootStorage, additionalStorage):
 	integerRootStorage = int(rootStorage.split("%")[0])
 
-	print(" Storage:")
-	print('  Root Directory / = ' + rootStorage + " ", end="")                                 
+	print(' Root Directory / = ' + rootStorage + " ", end="")                                 
 	print(createPercentBar("#", integerRootStorage, 20))
-	print("")
 
 	if additionalStorage:
 		integerAdditionalStorage = int(additionalStorage.split("%")[0])
 
-		print('  Additional Storage = ' + additionalStorage + " ", end="")
+		print(' Additional Storage = ' + additionalStorage + " ", end="")
 		print(createPercentBar("#", integerAdditionalStorage, 20))
-		print("")
+	print("")
 
 
 def createPercentBar(symbol, percent, length):
@@ -55,15 +53,15 @@ def createPercentBar(symbol, percent, length):
 def printUpdateData(updateData):
 
 	if updateData != None:                
-		print(" Update status:\n  " + updateData.split(' ')[0] + " packages to update")
+		print("Update status:\n  " + updateData.split(' ')[0] + " packages to update")
 		print("")
 	else:
-		print(" Update status:\n Failed to get update data")
+		print("Update status:\n Failed to get update data")
 		print("")
 
 
 def printFoldingData(foldingData):
-	print(" Folding Status:")
+	print("Folding Status:")
 	print('  ' + foldingData)
 
 def printLogFiles(sshConnection, logfileName, logfileLocation):
@@ -71,7 +69,7 @@ def printLogFiles(sshConnection, logfileName, logfileLocation):
 
 	bashCommandToPrintLogfile = 'tail -1 ' + logfileLocation
 
-	print(" " + logfileName + ":")
+	print(logfileName + ":")
 	try:
 		print("  " + dataFunctions.commandSend(sshConnection, bashCommandToPrintLogfile))
 	except:

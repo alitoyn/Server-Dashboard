@@ -12,10 +12,9 @@ def displayDashboard(sshConnection, selectedServer):
 
 	updates = dataFunctions.getUpdateData(sshConnection)
 	
-
 	displayFunctions.clearTerminal()
 
-	print(' Server Information: ' + config.server_name[selectedServer])
+	print('Server Information: ' + config.server_name[selectedServer])
 
 	serverUptime = dataFunctions.getUptime(sshConnection)
 	print(serverUptime + '\n')
@@ -23,6 +22,7 @@ def displayDashboard(sshConnection, selectedServer):
 	serverTempInfo = dataFunctions.getTempInfo(sshConnection)
 	print(serverTempInfo)
 	
+	print('Storage:')
 	displayFunctions.printStorageData(rootStorage, additionalStorage)
 
 	displayFunctions.printUpdateData(updates)    
@@ -36,4 +36,4 @@ def displayDashboard(sshConnection, selectedServer):
 		for i in range(numberOfLogFiles):
 			displayFunctions.printLogFiles(sshConnection, config.extra_logfile_name[selectedServer][i], config.extra_logfile_location[selectedServer][i])
 
-	print(' Select "0" to view processess and CPU load\n')
+	print('Select "0" to view processess and CPU load\n')
