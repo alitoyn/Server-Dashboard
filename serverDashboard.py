@@ -1,28 +1,27 @@
-from pexpect import pxssh       # used for ssh connection
-import sys, time, os # other libraries
+from pexpect import pxssh
 
 from Functions import controlFunctions
 from Functions import controlFunctions
 from Functions import foldingFunctions
 from Functions import displayFunctions
 
-from screens import foldingScreen as foldingScreenModule
-from screens import dashboard
-from screens import selectServer
+from screens import foldingScreenModule
+from screens import dashboardModule
+from screens import selectServerModule
 from screens import sendCommandModule
 from screens import newSshWindowModule
 from screens import overviewModule
 
-try:
-    from config import *        # import all data from the config file
+if controlFunctions.checkFileExists('config.py'):
     print("Config file found...")
-except ImportError:
+    import config
+else:
     print("No config file found")
     print("Confirm the file 'local_data.py' exists...")
-    sys.exit(0)
+    controlFunctions.exitProgram()
 
 
-foldingFunctions.dailyDownloadFoldingUserData(foldingUserID)
+foldingFunctions.dailyDownloadFoldingUserData(config.foldingUserID)
 
 serverSshConnections = controlFunctions.connectToServers()
 
@@ -51,11 +50,11 @@ while selectedScreen != quitProgram:
 
     
     if selectedScreen == dashboardScreen:
-            dashboard.displayDashboard(serverSshConnections[selectedServer], selectedServer)
+            dashboardModule.displayDashboard(serverSshConnections[selectedServer], selectedServer)
         
 
     elif selectedScreen == serverSelectScreen:
-        selectedServer = selectServer.userSelectServer()
+        selectedServer = selectServerModule.userSelectServer()
         
         selectedScreen = dashboardScreen
 
@@ -90,7 +89,7 @@ while selectedScreen != quitProgram:
         else:
             selectedScreen = userInput
 
-controlFunctions.logoutOfAllServers(serverSshConnections, server_name)
+controlFunctions.logoutOfAllServers(serverSshConnections)
 
 
 

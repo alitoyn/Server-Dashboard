@@ -36,7 +36,18 @@ def getUserInput():
 
 	return userInput
 
-def logoutOfAllServers(listOfSshConnections, listOfServerNames):
+def logoutOfAllServers(listOfSshConnections):
     print("Exiting...")
-    for i in range(len(listOfServerNames)):
+    for i in range(len(listOfSshConnections)):
         listOfSshConnections[i].logout()
+
+def checkFileExists(filename):
+	import os.path
+	if os.path.isfile(filename):
+		return True
+	else:
+		return False
+
+def exitProgram():
+	import sys.exit
+	sys.exit(0)
