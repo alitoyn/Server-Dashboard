@@ -1,6 +1,5 @@
 from pexpect import pxssh       # used for ssh connection
-import functions as z        # import all functions written for this program
-import sys, time, os, threading, getch # other libraries
+import sys, time, os # other libraries
 
 from Functions import controlFunctions
 from Functions import controlFunctions
@@ -25,17 +24,11 @@ except ImportError:
 
 foldingFunctions.dailyDownloadFoldingUserData(foldingUserID)
 
-# if the folding screen works then this can be deleted!
-# foldingData = foldingFunctions.foldingXmlParse()
-
-
 serverSshConnections = controlFunctions.connectToServers()
-
 
 defaultTerminalRows = 24
 defaultTerminalColumns = 80
 terminalSize = [defaultTerminalRows, defaultTerminalColumns]
-
 
 serverSelectScreen = 's'
 dashboardScreen = 'd'
@@ -44,7 +37,6 @@ sendCommandScreen = 'c'
 newSshWindowScreen = 'n'
 overviewScreen = 'o'
 quitProgram = 'q'
-
 
 # set default screen
 selectedScreen = dashboardScreen
@@ -56,9 +48,6 @@ selectedServer = defaultServerToDisplay
 while selectedScreen != quitProgram:
 
     skipDisplayOptions = False
-
-    # can probably remove this after the refactor
-    terminalSize = displayFunctions.updateTermSize()
 
     
     if selectedScreen == dashboardScreen:
@@ -91,9 +80,7 @@ while selectedScreen != quitProgram:
 
     elif selectedScreen == overviewScreen:
         overviewModule.overview(serverSshConnections)
-    
-    # NOTE WHILE REFACTORING
-    # This needs to go at the bottom
+
     if not skipDisplayOptions:
         print(displayFunctions.createDisplayOptions(selectedScreen))
         userInput = controlFunctions.getUserInput()
@@ -103,40 +90,8 @@ while selectedScreen != quitProgram:
         else:
             selectedScreen = userInput
 
-
-    
-
-    
-
-
-    
-
-# logout of all servers
-print("Exiting...")
-for i in range(len(server_name)):
-    serverSshConnections[i].logout()
+controlFunctions.logoutOfAllServers(serverSshConnections, server_name)
 
 
 
-
-
-
-
-
-# function that registers keyboard press in the background
-# doesn't like being in the functions file
-# TODO find way to work without this or move it to another file
-# def interrupt():
-#     global selectedScreen
-#     while selectedScreen != "q":
-#         keystrk = input()
-#         # thread doesn't continue until key is pressed
-#         selectedScreen = keystrk
-#         if keystrk == "q":
-#             print("Exiting...")
-
-
-# # start the interrupt thread
-# inter = threading.Thread(target=interrupt)
-# inter.start()
 

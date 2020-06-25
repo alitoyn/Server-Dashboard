@@ -53,7 +53,7 @@ def createPercentBar(symbol, percent, length):
 def printUpdateData(updateData):
 
 	if updateData != None:                
-		print("Update status:\n  " + updateData.split(' ')[0] + " packages to update")
+		print("Update status:\n " + updateData.split(' ')[0] + " packages to update")
 		print("")
 	else:
 		print("Update status:\n Failed to get update data")
@@ -62,7 +62,7 @@ def printUpdateData(updateData):
 
 def printFoldingData(foldingData):
 	print("Folding Status:")
-	print('  ' + foldingData)
+	print(' ' + foldingData)
 
 def printLogFiles(sshConnection, logfileName, logfileLocation):
 	from Functions import dataFunctions

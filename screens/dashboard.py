@@ -20,6 +20,7 @@ def displayDashboard(sshConnection, selectedServer):
 	print(serverUptime + '\n')
 
 	serverTempInfo = dataFunctions.getTempInfo(sshConnection)
+	print('Package temperature:')
 	print(serverTempInfo)
 	
 	print('Storage:')

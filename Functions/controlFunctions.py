@@ -35,3 +35,8 @@ def getUserInput():
 	userInput = input()
 
 	return userInput
+
+def logoutOfAllServers(listOfSshConnections, listOfServerNames):
+    print("Exiting...")
+    for i in range(len(listOfServerNames)):
+        listOfSshConnections[i].logout()

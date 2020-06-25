@@ -23,48 +23,16 @@ def overview(listOfSshConnections):
 		printStorageOverview(listOfSshConnections)
 	elif chosenOverviewIndex == 2:
 		printUptimeOverview(listOfSshConnections)
+	elif chosenOverviewIndex == 3:
+		printTempOverview(listOfSshConnections)
 
 	print('Select overview again to reset view')
 
 
-	#     # print temp overview
-	#     if choice == "3":
-	#         os.system('clear')
-	#         print("Loading temp details...\n")
-			
-	#         for i in range(len(server_name)):
-	#             print(server_name[i] + " :")
-
-	#             tempInfo = z.commandSend(serverSshConnections[i], 'sensors | grep Package | xargs echo').replace('\\xc2\\xb0', ' deg.')
-	#             if tempInfo[0] == 'P':
-	#                 print(' Package temperature:')
-	#                 print(' ' + tempInfo)
-	#                 print("")
-	#             else:
-	#                 print(' Package temperature:')
-	#                 print(' Please install dependancies to see temperature')
-	#                 print("")
-
-	#     # print the user options
-	#     terminalSize = z.updateTermSize()
-	#     print(z.displayOptions(selectedScreen, terminalSize))
-
-	#     print("\nInput 'r' to reset and choose another overview")
-
-	#     # break from loop if user selects an option
-	#     # this will loop for 60 seconds before repeating the loop
-	#     while 1:
-	#        time.sleep(0.5)
-	#        if selectedScreen != "o" or selectedScreen == "r":
-	#             if selectedScreen == "r":
-	#                 selectedScreen = "o"
-	#             break
-
-	
 def printOverviewOptions(overviewOptions):
 	print("Select which option to show details for:\n")
 	for i in range(len(overviewOptions)):
-		print(str(i) + ':' + overviewOptions[i])
+		print(str(i) + ': ' + overviewOptions[i])
 
 def printUpdateOverview(listOfSshConnections):
 	import config
@@ -121,3 +89,18 @@ def printUptimeOverview(listOfSshConnections):
 		print(config.server_name[i] + ':')
 		serverUptime = dataFunctions.getUptime(listOfSshConnections[i])
 		print(serverUptime + '\n')
+
+def printTempOverview(listOfSshConnections):
+	import config
+	from Functions import displayFunctions
+	from Functions import dataFunctions
+
+	displayFunctions.clearTerminal()
+
+	print("Loading CPU temperature details...\n")
+
+	for i in range(len(config.server_name)):
+		
+		print(config.server_name[i] + ':')
+		serverTempInfo = dataFunctions.getTempInfo(listOfSshConnections[i])
+		print(serverTempInfo)

@@ -66,12 +66,9 @@ def getTempInfo(connectedServer):
 	expectedStartOfResponse = 'P'
 
 	if checkFirstLetterOfString(tempInfo, expectedStartOfResponse):
-		output = 'Package temperature:\n  '
-		output += tempInfo
-		output += '\n'
+		output = ' ' + tempInfo + '\n'
 	else:
-		output = 'Package temperature:\n '
-		output += 'Please install dependancies to see temperature\n'
+		output = 'Please install dependancies to see temperature\n'
 
 	return output
 
