@@ -1,12 +1,14 @@
 def newSshWindow():
 	from Functions import displayFunctions
 	from Functions import controlFunctions
+	from Functions import dataFunctions
 
 	displayFunctions.clearTerminal()
 
 	displayFunctions.printServerList()
 
-	selectedServer = int(controlFunctions.getUserInput())
+	allowedInputs = dataFunctions.getListOfServerIndicies()
+	selectedServer = int(dataFunctions.checkInputAgainstList_int(allowedInputs))
 
 	createNewSshConnection(selectedServer)
 

@@ -13,7 +13,9 @@ def overview(listOfSshConnections):
 
 	printOverviewOptions(overviewOptions)
 
-	chosenOverviewIndex = int(controlFunctions.getUserInput())
+	overviewChoices = dataFunctions.getListOfIndicesFromList()
+
+	chosenOverviewIndex = dataFunctions.checkInputAgainstList_int(overviewChoices)
 
 	displayFunctions.clearTerminal()
 

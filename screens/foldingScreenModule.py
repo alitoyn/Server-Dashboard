@@ -2,6 +2,7 @@ def displayFoldingScreen(listOfSshConnections):
 	import config
 	from Functions import displayFunctions
 	from Functions import foldingFunctions
+	from Functions import controlFunctions
 
 	foldingData = foldingFunctions.foldingXmlParse()
 

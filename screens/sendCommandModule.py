@@ -19,10 +19,13 @@ def getCommandAndSend():
 	print("Which server do you want to send a command:")
 
 	displayFunctions.printServerList()
-	chosenServerIndex = int(controlFunctions.getUserInput())
+	allowedInputs = dataFunctions.getListOfServerIndicies()
+	chosenServerIndex = dataFunctions.checkInputAgainstList_int(allowedInputs)
 
 	printListOfAvailableCommands(bashCommandDictionary)
-	chosenCommandIndex = int(controlFunctions.getUserInput())
+	
+	allowedInputs = range(len(bashCommandDictionary))
+	chosenCommandIndex = dataFunctions.checkInputAgainstList_int(allowedInputs)
 
 	chosenBashCommand = getBashCommandFromIndex(chosenCommandIndex, bashCommandDictionary)
 

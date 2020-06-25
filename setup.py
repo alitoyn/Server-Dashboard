@@ -89,7 +89,7 @@ count = 0
 while 1:
 		# for the first loop assume the user does want to add a server
 	if count != 0:
-		response = dataFunctions.dataVal("\nWould you like to add another server? (y/n)\n", allowed_inputs)
+		response = dataFunctions.dataValWithQuestion("\nWould you like to add another server? (y/n)\n", allowed_inputs)
 	else:
 		response = "y"
 
@@ -123,7 +123,7 @@ while 1:
 		file.write("server_key[" + str(count) + "] = '" + response + "'\n")
 
 		# Does the user have an additional storage location
-		response = dataFunctions.dataVal("\nDo you have an additional storage location you want to see data for? (y/n)\n", allowed_inputs)
+		response = dataFunctions.dataValWithQuestion("\nDo you have an additional storage location you want to see data for? (y/n)\n", allowed_inputs)
 		if response == 'Y' or response == 'y':
 			response = input("\nWhat is the path to the additional storage? e.g. /mount/drive\n")
 			file.write("additional_storage[" + str(count) + "] = '" + response + "'\n")
@@ -132,14 +132,14 @@ while 1:
 
 		
 		# Does the user have any logfiles they want to track
-		response = dataFunctions.dataVal("\nDo you have a logfile you want to track? (y/n)\n", allowed_inputs)
+		response = dataFunctions.dataValWithQuestion("\nDo you have a logfile you want to track? (y/n)\n", allowed_inputs)
 		
 		if response == 'y' or response == 'Y':
 			logfile_count = 0
 			
 			while 1:
 				if logfile_count != 0:
-					response = dataFunctions.dataVal("\nWould you like to add another logfile? (y/n)\n", allowed_inputs)
+					response = dataFunctions.dataValWithQuestion("\nWould you like to add another logfile? (y/n)\n", allowed_inputs)
 				else:
 					response = "y"
 
@@ -162,7 +162,7 @@ file.write(displayFunctions.getScreenDivider("# Additional Data", divider_width)
 file.write("\n")
 
 # get folding data
-response = dataFunctions.dataVal("\nDo you want to track your F@H stats? (y/n)\n", allowed_inputs)
+response = dataFunctions.dataValWithQuestion("\nDo you want to track your F@H stats? (y/n)\n", allowed_inputs)
 if response == 'Y' or response == 'y':
 	response = input("\nWhat is your F@H user ID?\n")
 	file.write("foldingUserID = '" + response + "'\n")

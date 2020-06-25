@@ -2,6 +2,7 @@ def userSelectServer():
 	import config
 	from Functions import displayFunctions
 	from Functions import controlFunctions
+	from Functions import dataFunctions
 
 	displayFunctions.clearTerminal()
 
@@ -9,33 +10,7 @@ def userSelectServer():
 
 	displayFunctions.printServerList()
 
-	while 1:
-
-		userInput = controlFunctions.getUserInput()
-		try:
-			userInput = int(userInput)
-		except:
-			pass
-
-		wasUserInputValid = dataValidationServerSelection(userInput, config.server_name)
-
-		if wasUserInputValid:
-			break
-		else:
-			print('Please enter a valid input')
+	allowedInputs = dataFunctions.getListOfServerIndicies()
+	userInput = dataFunctions.checkInputAgainstList_int(allowedInputs)
 
 	return userInput
-
-
-def dataValidationServerSelection(userInput, listOfServerNames):
-
-	numberOfServers = len(listOfServerNames)
-
-	check = False
-
-	for i in range(numberOfServers):
-		if i == userInput:
-			check = True
-			break
-
-	return check

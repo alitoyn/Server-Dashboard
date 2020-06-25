@@ -77,7 +77,7 @@ def checkFirstLetterOfString(string, char):
 		return False
 
 
-def dataVal(question, allowedInputs):
+def dataValWithQuestion(question, allowedInputs):
 	import time
 	check = 0
 	length = len(allowedInputs)
@@ -93,3 +93,55 @@ def dataVal(question, allowedInputs):
 		else:
 			return response
 			break
+
+def checkInputAgainstList_int(allowedInputs):
+	import time
+	check = 0
+	length = len(allowedInputs)
+	while(1):
+		response = input()
+		try:
+			response = int(response)
+		except:
+			pass
+
+		for i in range(length):
+			if response == allowedInputs[i]:
+				check = 1
+				break
+		if check == 0:
+			print("\nPlease enter a valid input...\n")
+			time.sleep(0.5)
+		else:
+			return response
+			break
+
+def checkInputAgainstList_char(allowedInputs):
+	import time
+	check = 0
+	length = len(allowedInputs)
+	while(1):
+		response = input()
+		for i in range(length):
+			if response == allowedInputs[i]:
+				check = 1
+				break
+		if check == 0:
+			print("\nPlease enter a valid input...\n")
+			time.sleep(0.5)
+		else:
+			return response
+			break
+
+def getListOfServerIndicies():
+	import config
+	output = []
+	for i in range(len(config.server_name)):
+		output.append(i)
+	return output
+
+def getListOfIndicesFromList(inputList):
+	outputList = []
+	for i in range(len(inputList)):
+		outputList.append(i)
+	return outputList

@@ -1,8 +1,3 @@
-def getUserInput():
-	userInput = input()
-
-	return userInput
-
 def checkFileExists(filename):
     import os.path
     if os.path.isfile(filename):

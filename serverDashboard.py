@@ -1,9 +1,8 @@
 from pexpect import pxssh
 
 from Functions import controlFunctions
-from Functions import controlFunctions
+from Functions import dataFunctions
 from Functions import foldingFunctions
-from Functions import displayFunctions
 
 from screens import foldingScreenModule
 from screens import dashboardModule
@@ -35,7 +34,12 @@ foldingScreen = 'f'
 sendCommandScreen = 'c'
 newSshWindowScreen = 'n'
 overviewScreen = 'o'
+launchProcesses = '0'
 quitProgram = 'q'
+
+listOfScreens = [serverSelectScreen, dashboardScreen, foldingScreen, 
+                 sendCommandScreen, newSshWindowScreen, overviewScreen,
+                  launchProcesses, quitProgram ]
 
 # set default screen
 selectedScreen = dashboardScreen
@@ -77,7 +81,8 @@ while selectedScreen != quitProgram:
 
     if not skipDisplayOptions:
         print(controlFunctions.createDisplayOptions(selectedScreen))
-        userInput = controlFunctions.getUserInput()
+        
+        userInput = dataFunctions.checkInputAgainstList_char(listOfScreens)
     
         if userInput == '0':
             controlFunctions.launchProcessesView(serverSshConnections[selectedServer], selectedServer)
