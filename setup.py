@@ -1,6 +1,7 @@
 # This file creates the config file for the server-dashboard.py program
 import sys, time
-import functions
+from Functions import dataFunctions
+from Functions import displayFunctions
 
 # find if config file exists and then prompt user to overwrite if it does --------------------------------------------------
 try: 				# try to import file
@@ -35,11 +36,11 @@ file = open("config.py","w")
 divider_width = 125 # this is the length of the divider lines to print in the file
 
 text = "# This file is the config for server-dashboard by Ali Toyn"
-file.write(functions.getScreenDivider(text, divider_width))					# this function adds the dividers into the file
+file.write(displayFunctions.getScreenDivider(text, divider_width))					# this ` adds the dividers into the file
 
 file.write("\n")
 text = "# The description of all of the variables are listed below:"
-file.write(functions.getScreenDivider(text, divider_width))
+file.write(displayFunctions.getScreenDivider(text, divider_width))
 
 file.write("\n# server_name[x] = human friendly name for server\n")
 file.write("# server_user[x] = username to log in to server\n")
@@ -48,7 +49,7 @@ file.write("# server_ip[x] = ip address of server\n")
 
 file.write("\n")
 text = "# These variables are optional for each connection:"
-file.write(functions.getScreenDivider(text, divider_width))
+file.write(displayFunctions.getScreenDivider(text, divider_width))
 
 file.write("\n# additional_storage[x] = the mount location of an additional storage location to show data for\n")
 file.write("# extra_logfile_name[x][y] = the name of a log file to track\n")
@@ -56,20 +57,20 @@ file.write("# extra_logfile_location[x][y] = the path to an additional logfile\n
 
 file.write("\n")
 text = "# This option is needed to show info about your folding at home user:"
-file.write(functions.getScreenDivider(text, divider_width))
+file.write(displayFunctions.getScreenDivider(text, divider_width))
 file.write("\n# foldingUserID = the user ID for your F@H account\n")
 
 file.write("\n")
 text = "# This option is needed to open additional terminal windows:"
-file.write(functions.getScreenDivider(text, divider_width))
+file.write(displayFunctions.getScreenDivider(text, divider_width))
 file.write("\n# default_terminal = the terminal you want to use\n")
 
 file.write("\n")
-file.write(functions.getScreenDivider("# Config Data", divider_width))
+file.write(displayFunctions.getScreenDivider("# Config Data", divider_width))
 
 # init empty lists to fill later on ----------------------------------------------------------------------------------------
 text = "# Leave this section here to init empty lists"
-file.write(functions.getScreenDivider(text, divider_width))
+file.write(displayFunctions.getScreenDivider(text, divider_width))
 file.write("server_name = {}\n")
 file.write("server_user = {}\n")
 file.write("server_key = {}\n")
@@ -88,7 +89,7 @@ count = 0
 while 1:
 		# for the first loop assume the user does want to add a server
 	if count != 0:
-		response = functions.dataVal("\nWould you like to add another server? (y/n)\n", allowed_inputs)
+		response = dataFunctions.dataVal("\nWould you like to add another server? (y/n)\n", allowed_inputs)
 	else:
 		response = "y"
 
@@ -99,7 +100,7 @@ while 1:
 	# otherwise start taking data
 	else:
 		file.write("\n")
-		file.write(functions.getScreenDivider("# Data for server[" + str(count) + "]", divider_width))
+		file.write(displayFunctions.getScreenDivider("# Data for server[" + str(count) + "]", divider_width))
 		
 		# get server name
 		response = input("\nWhat is the name of the server?\n")
@@ -122,21 +123,23 @@ while 1:
 		file.write("server_key[" + str(count) + "] = '" + response + "'\n")
 
 		# Does the user have an additional storage location
-		response = functions.dataVal("\nDo you have an additional storage location you want to see data for? (y/n)\n", allowed_inputs)
+		response = dataFunctions.dataVal("\nDo you have an additional storage location you want to see data for? (y/n)\n", allowed_inputs)
 		if response == 'Y' or response == 'y':
 			response = input("\nWhat is the path to the additional storage? e.g. /mount/drive\n")
 			file.write("additional_storage[" + str(count) + "] = '" + response + "'\n")
+		else:
+			file.write("additional_storage[" + str(count) + "] = None\n")
 
 		
 		# Does the user have any logfiles they want to track
-		response = functions.dataVal("\nDo you have a logfile you want to track? (y/n)\n", allowed_inputs)
+		response = dataFunctions.dataVal("\nDo you have a logfile you want to track? (y/n)\n", allowed_inputs)
 		
 		if response == 'y' or response == 'Y':
 			logfile_count = 0
 			
 			while 1:
 				if logfile_count != 0:
-					response = functions.dataVal("\nWould you like to add another logfile? (y/n)\n", allowed_inputs)
+					response = dataFunctions.dataVal("\nWould you like to add another logfile? (y/n)\n", allowed_inputs)
 				else:
 					response = "y"
 
@@ -155,11 +158,11 @@ while 1:
 		count += 1
 
 file.write("\n")
-file.write(functions.getScreenDivider("# Additional Data", divider_width))
+file.write(displayFunctions.getScreenDivider("# Additional Data", divider_width))
 file.write("\n")
 
 # get folding data
-response = functions.dataVal("\nDo you want to track your F@H stats? (y/n)\n", allowed_inputs)
+response = dataFunctions.dataVal("\nDo you want to track your F@H stats? (y/n)\n", allowed_inputs)
 if response == 'Y' or response == 'y':
 	response = input("\nWhat is your F@H user ID?\n")
 	file.write("foldingUserID = '" + response + "'\n")
