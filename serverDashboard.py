@@ -47,17 +47,14 @@ selectedServer = defaultServerToDisplay
 while selectedScreen != quitProgram:
 
     skipDisplayOptions = False
-
-    
+   
     if selectedScreen == dashboardScreen:
             dashboardModule.displayDashboard(serverSshConnections[selectedServer], selectedServer)
         
-
     elif selectedScreen == serverSelectScreen:
         selectedServer = selectServerModule.userSelectServer()
         
         selectedScreen = dashboardScreen
-
         skipDisplayOptions = True
 
     elif selectedScreen == foldingScreen:
@@ -67,30 +64,25 @@ while selectedScreen != quitProgram:
         sendCommandModule.getCommandAndSend()
 
         selectedScreen = dashboardScreen
-
         skipDisplayOptions = True
 
     elif selectedScreen == newSshWindowScreen:
         newSshWindowModule.newSshWindow()
 
         selectedScreen = dashboardScreen
-
         skipDisplayOptions = True
 
     elif selectedScreen == overviewScreen:
         overviewModule.overview(serverSshConnections)
 
     if not skipDisplayOptions:
-        print(displayFunctions.createDisplayOptions(selectedScreen))
+        print(controlFunctions.createDisplayOptions(selectedScreen))
         userInput = controlFunctions.getUserInput()
     
         if userInput == '0':
-            displayFunctions.launchProcessesView(serverSshConnections[selectedServer], selectedServer)
+            controlFunctions.launchProcessesView(serverSshConnections[selectedServer], selectedServer)
         else:
             selectedScreen = userInput
 
 controlFunctions.logoutOfAllServers(serverSshConnections)
-
-
-
 

@@ -10,11 +10,9 @@ def commandSend(connectedServer, command):
 def sshParse(string):
 
 	unwantedData = '\\r\\n'
-	
 	cleanedString = string[string.find(unwantedData)+len(unwantedData):string.rfind(unwantedData)]
 	
 	return cleanedString
-
 
 
 def getRootStorage(connectedServer):
@@ -78,18 +76,6 @@ def checkFirstLetterOfString(string, char):
 	else:
 		return False
 
-def getNumberOfLogFiles(logFileArray):
-	arrayInitialisedTo = 0
-
-	numberOfLogFiles = 0
-
-	for i in range(len(logFileArray)):
-		if logFileArray[i] == 0:
-			break
-		else:
-			numberOfLogFiles += 1
-
-	return numberOfLogFiles
 
 def dataVal(question, allowedInputs):
 	import time

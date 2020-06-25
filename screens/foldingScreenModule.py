@@ -5,7 +5,7 @@ def displayFoldingScreen(listOfSshConnections):
 
 	foldingData = foldingFunctions.foldingXmlParse()
 
-	terminalSize = displayFunctions.updateTermSize()
+	terminalSize = controlFunctions.updateTermSize()
 	columnsIndex = 1
 
 	displayFunctions.clearTerminal()
