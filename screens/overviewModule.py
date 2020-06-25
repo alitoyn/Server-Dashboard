@@ -21,22 +21,11 @@ def overview(listOfSshConnections):
 		printUpdateOverview(listOfSshConnections)
 	elif chosenOverviewIndex == 1:
 		printStorageOverview(listOfSshConnections)
+	elif chosenOverviewIndex == 2:
+		printUptimeOverview(listOfSshConnections)
 
 	print('Select overview again to reset view')
 
-
-	
-
-	#     # print uptime overview
-	#     if choice == "2":
-	#         os.system('clear')
-	#         print("Loading uptime details...\n")
-			
-	#         for i in range(len(server_name)):
-	#             print(server_name[i] + " :")
-
-	#             print(z.commandSend(server[i], 'uptime'))
-	#             print("")
 
 	#     # print temp overview
 	#     if choice == "3":
@@ -118,30 +107,17 @@ def printStorageOverview(listOfSshConnections):
 
 
 
+def printUptimeOverview(listOfSshConnections):
+	import config
+	from Functions import displayFunctions
+	from Functions import dataFunctions
 
+	displayFunctions.clearTerminal()
 
-	#     # print storage overview
-	#     if choice == "1":
-	#         os.system('clear')
-	#         print("Loading storage details...\n")
-			
-	#         for i in range(len(server_name)):
-	#             print(server_name[i] + " :")
+	print("Loading uptime details...\n")
 
-	#             cmd = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
-	#             storage = z.commandSend(server[i], cmd)
-	#             try:
-	#                 storage2 = z.commandSend(server[i], "df -h " + additional_storage[i] + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'")
-	#                 add_stor_flag = 1
-	#             except:
-	#                 add_stor_flag = 0
-				
-	#             print(' Root Directory / = ' + storage + " ", end="")                                 
-	#             z.percentBar("#", int(storage.split("%")[0]), 20)
-	#             print("")
-
-	#             # try to print additional storage if it has been input otherwise pass over
-	#             if add_stor_flag == 1:
-	#                 print(' Additional Storage = ' + storage2 + " ", end="")
-	#                 z.percentBar("#", int(storage2.split("%")[0]), 20)
-	#                 print("")
+	for i in range(len(config.server_name)):
+		
+		print(config.server_name[i] + ':')
+		serverUptime = dataFunctions.getUptime(listOfSshConnections[i])
+		print(serverUptime + '\n')
