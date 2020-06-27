@@ -20,12 +20,28 @@ def connectToServers():
         try:
             e = serverSshConnections[i].login (config.server_ip[i], config.server_user[i], ssh_key=config.server_key[i], quiet=True, port=config.server_port[i])
             print(config.server_name[i] + " connected. (" + str(i + 1) + "/" + str(numberOfServers) + ")")  
-        except pxssh.ExceptionPxssh as e:
+        except pxssh.ExceptionPxssh:
             print ("SSH session for " + config.server_name[i] + " failed on login.")
-            print (str(serverSshConnections[i]))
+            serverSshConnections[i] = None
+
+    activeConnections = checkAtLeastOneConnectionActive(serverSshConnections)
+
+    if activeConnections != True:
+        print('\nNo servers successfully logged in')
+        exitProgram()
 
     print ("\nSSH session login successful")
     return serverSshConnections
+
+def checkAtLeastOneConnectionActive(serverSshConnections):
+    check = False
+
+    for i in range(len(serverSshConnections)):
+        if serverSshConnections[i] != None:
+            check = True
+
+    return check
+
 
 def createDisplayOptions(currentScreen):
     from Functions import displayFunctions
@@ -81,7 +97,7 @@ def logoutOfAllServers(listOfSshConnections):
         listOfSshConnections[i].logout()
 
 def exitProgram():
-    import sys.exit
+    import sys
     sys.exit(0)
 
 def updateTermSize():
@@ -97,3 +113,4 @@ def updateTermSize():
 	except:
 		return [defaultRows, defualtColumns]
 
+# checkServerIsLoggedIn
