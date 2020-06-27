@@ -16,18 +16,30 @@ def sshParse(string):
 
 
 def getRootStorage(connectedServer):
+	from Functions import controlFunctions
 
-	bashCommandForRootStorage = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
-	rootStorage = commandSend(connectedServer, bashCommandForRootStorage)
+	if controlFunctions.checkServerIsLoggedIn(connectedServer):
+
+		bashCommandForRootStorage = "df -h / | awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
+		rootStorage = commandSend(connectedServer, bashCommandForRootStorage)
+
+	else:
+		rootStorage = 'Server Not Logged In'
 
 	return rootStorage
 
 def getAdditionalStorage(additionalStorageLocation, connectedServer):
+	from Functions import controlFunctions
 
 	if additionalStorageLocation != None:
 
-		bashCommandForAdditionalStorage = "df -h " + additionalStorageLocation + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
-		additionalStorage = commandSend(connectedServer, bashCommandForAdditionalStorage)
+		if controlFunctions.checkServerIsLoggedIn(connectedServer):	
+
+			bashCommandForAdditionalStorage = "df -h " + additionalStorageLocation + "| awk 'FNR == 2 {print $5 " + '" (" $3 " / " $2 ")"}' + "'"
+			additionalStorage = commandSend(connectedServer, bashCommandForAdditionalStorage)
+
+		else:
+			additionalStorage = 'Server not logged in'
 
 	else:
 		additionalStorage = None
@@ -36,37 +48,60 @@ def getAdditionalStorage(additionalStorageLocation, connectedServer):
 
 
 def getUpdateData(connectedServer):
+	from Functions import controlFunctions
+
 	bashGetUpdatesCommand = 'apt-get upgrade --dry-run | grep "newly install"'
 
-	try:
-		updateData = commandSend(connectedServer, bashGetUpdatesCommand)
-	except:
-		updateData = None
+	if controlFunctions.checkServerIsLoggedIn(connectedServer):
+		try:
+			updateData = commandSend(connectedServer, bashGetUpdatesCommand)
+			output = updateData.split(' ')[0] + " packages to update\n"
+		
+		except:
+			output = 'Failed to get update data'
+	else:
+		output = 'Server not logged in'
 
-	return updateData
+	return output
+
+def printUpdateData(updateData):
+
+	if updateData != None:                
+		print("Update status:\n " + updateData.split(' ')[0] + " packages to update")
+		print("")
+	else:
+		print("Update status:\n Failed to get update data")
+		print("")
 
 
 def getUptime(connectedServer):
-
+	from Functions import controlFunctions
+	
 	bashCommandForUptime = 'uptime'
 
-	uptimeData = commandSend(connectedServer, bashCommandForUptime)
+	if controlFunctions.checkServerIsLoggedIn(connectedServer):
+		uptimeData = commandSend(connectedServer, bashCommandForUptime)
+	else:
+		uptimeData = ' Server not logged in'
 
 	return uptimeData
 
 def getTempInfo(connectedServer):
-	
+	from Functions import controlFunctions
+
 	bashCommandForTempInfo = 'sensors | grep Package | xargs echo'
+	if controlFunctions.checkServerIsLoggedIn(connectedServer):
+		# The replace fixes the broken degree symbol
+		tempInfo = commandSend(connectedServer, bashCommandForTempInfo).replace('\\xc2\\xb0', ' deg.')
 
-	# The replace fixes the broken degree symbol
-	tempInfo = commandSend(connectedServer, bashCommandForTempInfo).replace('\\xc2\\xb0', ' deg.')
+		expectedStartOfResponse = 'P'
 
-	expectedStartOfResponse = 'P'
-
-	if checkFirstLetterOfString(tempInfo, expectedStartOfResponse):
-		output = ' ' + tempInfo + '\n'
+		if checkFirstLetterOfString(tempInfo, expectedStartOfResponse):
+			output = ' ' + tempInfo + '\n'
+		else:
+			output = 'Please install dependancies to see temperature\n'
 	else:
-		output = 'Please install dependancies to see temperature\n'
+		output = ' Server not logged in'
 
 	return output
 

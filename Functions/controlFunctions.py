@@ -94,7 +94,8 @@ def launchProcessesView(connectedServer, selectedServer):
 def logoutOfAllServers(listOfSshConnections):
     print("Exiting...")
     for i in range(len(listOfSshConnections)):
-        listOfSshConnections[i].logout()
+        if checkServerIsLoggedIn(listOfSshConnections[i]):
+            listOfSshConnections[i].logout()
 
 def exitProgram():
     import sys
@@ -113,4 +114,9 @@ def updateTermSize():
 	except:
 		return [defaultRows, defualtColumns]
 
-# checkServerIsLoggedIn
+def checkServerIsLoggedIn(serverSshConnection):
+    if serverSshConnection != None:
+        return True
+    else:
+        return False
+

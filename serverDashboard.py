@@ -1,6 +1,7 @@
 from Functions import controlFunctions
 from Functions import dataFunctions
 from Functions import foldingFunctions
+from Functions import displayFunctions
 
 from screens import foldingScreenModule
 from screens import dashboardModule
@@ -51,7 +52,10 @@ while selectedScreen != quitProgram:
     skipDisplayOptions = False
    
     if selectedScreen == dashboardScreen:
-            dashboardModule.displayDashboard(serverSshConnections[selectedServer], selectedServer)
+            if controlFunctions.checkServerIsLoggedIn(serverSshConnections[selectedServer]):
+                dashboardModule.displayDashboard(serverSshConnections[selectedServer], selectedServer)
+            else:
+                displayFunctions.printServerNotLoggedIn(selectedServer)
         
     elif selectedScreen == serverSelectScreen:
         selectedServer = selectServerModule.userSelectServer()

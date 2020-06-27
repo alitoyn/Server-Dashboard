@@ -1,6 +1,7 @@
 def overview(listOfSshConnections):
 	from Functions import displayFunctions
 	from Functions import controlFunctions
+	from Functions import dataFunctions
 
 	displayFunctions.clearTerminal()
 
@@ -13,7 +14,7 @@ def overview(listOfSshConnections):
 
 	printOverviewOptions(overviewOptions)
 
-	overviewChoices = dataFunctions.getListOfIndicesFromList()
+	overviewChoices = dataFunctions.getListOfIndicesFromList(overviewOptions)
 
 	chosenOverviewIndex = dataFunctions.checkInputAgainstList_int(overviewChoices)
 
@@ -47,16 +48,12 @@ def printUpdateOverview(listOfSshConnections):
 
 	for i in range(len(config.server_name)):
 		print(config.server_name[i] + ':')
-		try:
-			updates = dataFunctions.getUpdateData(listOfSshConnections[i])
-			updates = " " + updates.split(' ')[0] + " packages to update"
+		
+		updates = dataFunctions.getUpdateData(listOfSshConnections[i])
+		
+		print(' ' + updates)
 
-		except:
-			updates = "Failed to get data"
-
-		print(updates)
-		print("")
-
+	print('')
 
 def printStorageOverview(listOfSshConnections):
 	import config
@@ -106,3 +103,4 @@ def printTempOverview(listOfSshConnections):
 		print(config.server_name[i] + ':')
 		serverTempInfo = dataFunctions.getTempInfo(listOfSshConnections[i])
 		print(serverTempInfo)
+	print('')

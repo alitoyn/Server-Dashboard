@@ -6,18 +6,21 @@ def clearTerminal():
 	os.system(bashCommandToClearScreen)
 
 def printStorageData(rootStorage, additionalStorage):
-	integerRootStorage = int(rootStorage.split("%")[0])
+	try:
+		integerRootStorage = int(rootStorage.split("%")[0])
 
-	print(' Root Directory / = ' + rootStorage + " ", end="")                                 
-	print(createPercentBar("#", integerRootStorage, 20))
+		print(' Root Directory / = ' + rootStorage + " ", end="")                                 
+		print(createPercentBar("#", integerRootStorage, 20))
 
-	if additionalStorage:
-		integerAdditionalStorage = int(additionalStorage.split("%")[0])
+		if additionalStorage:
+			integerAdditionalStorage = int(additionalStorage.split("%")[0])
 
-		print(' Additional Storage = ' + additionalStorage + " ", end="")
-		print(createPercentBar("#", integerAdditionalStorage, 20))
-	print("")
+			print(' Additional Storage = ' + additionalStorage + " ", end="")
+			print(createPercentBar("#", integerAdditionalStorage, 20))
+		print("")
 
+	except:
+		print(' Server not logged in\n')
 
 def createPercentBar(symbol, percent, length):
 	roundedPercentage = round((percent/100) * length)
@@ -53,3 +56,11 @@ def printServerList():
 	for i in range(numberOfServers):
 		print(str(i) + ": " + server_name[i])
 	print("\nSelection: ", end='')
+
+def printServerNotLoggedIn(serverIndex):
+	import config
+
+	clearTerminal()
+
+	print(config.server_name[serverIndex] + ' is not loged in.')
+	print('Please restart program to try again or select another server\n')

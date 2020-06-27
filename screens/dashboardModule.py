@@ -26,7 +26,7 @@ def displayDashboard(sshConnection, selectedServer):
 	print('Storage:')
 	displayFunctions.printStorageData(rootStorage, additionalStorage)
 
-	printUpdateData(updates)    
+	print('Update Data:\n ' + updates)    
 
 	foldingLogData = foldingFunctions.getFoldingLogData(sshConnection)
 	printFoldingData(foldingLogData)
@@ -39,15 +39,6 @@ def displayDashboard(sshConnection, selectedServer):
 
 	print('Select "0" to view processess and CPU load\n')
 
-
-def printUpdateData(updateData):
-
-	if updateData != None:                
-		print("Update status:\n " + updateData.split(' ')[0] + " packages to update")
-		print("")
-	else:
-		print("Update status:\n Failed to get update data")
-		print("")
 
 
 def printFoldingData(foldingData):
