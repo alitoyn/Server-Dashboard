@@ -16,6 +16,6 @@ def newSshWindow():
 def createNewSshConnection(selectedServer):
 	import config, os
 	
-	bashCommand = config.default_terminal + ' --command "ssh -i ' + config.server_key[selectedServer] + ' -p ' + config.server_port[selectedServer] + ' ' + config.server_user[selectedServer] + '@' + config.server_ip[selectedServer] + '"'
+	bashCommand = config.default_terminal + ' "ssh -i ' + config.server_key[selectedServer] + ' -p ' + config.server_port[selectedServer] + ' ' + config.server_user[selectedServer] + '@' + config.server_ip[selectedServer] + '"'
 
 	os.system(bashCommand)

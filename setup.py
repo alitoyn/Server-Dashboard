@@ -63,7 +63,7 @@ file.write("\n# foldingUserID = the user ID for your F@H account\n")
 file.write("\n")
 text = "# This option is needed to open additional terminal windows:"
 file.write(displayFunctions.getScreenDivider(text, divider_width))
-file.write("\n# default_terminal = the terminal you want to use\n")
+file.write("\n# default_terminal = the terminal you want to use + the option to pass a command\n")
 
 file.write("\n")
 file.write(displayFunctions.getScreenDivider("# Config Data", divider_width))
@@ -170,7 +170,9 @@ else:
 	file.write("foldingUserID = ''\n")
 
 # get default terminal name
-response = input("\nWhat is your default terminal? This is needed to open additional windows\n")
+print('\nWhat is your default terminal?\nPlease also add the option to pass a command')
+print('e.g. "terminator --command", "tmux -c" or "gnome-terminal -e" etc.')
+response = input("This is needed to open additional windows\n")
 file.write("default_terminal = '" + response + "'\n")
 
 file.close()

@@ -87,7 +87,7 @@ def launchProcessesView(connectedServer, selectedServer):
 
     bashCommandForProcessess = 'htop'
 
-    fullBashCommand = config.default_terminal + ' --command "ssh -i ' + config.server_key[selectedServer] + ' -p ' + config.server_port[selectedServer] + ' -t ' + config.server_user[selectedServer] + '@' + config.server_ip[selectedServer] + ' ' + bashCommandForProcessess + '"'
+    fullBashCommand = config.default_terminal + ' "ssh -i ' + config.server_key[selectedServer] + ' -p ' + config.server_port[selectedServer] + ' -t ' + config.server_user[selectedServer] + '@' + config.server_ip[selectedServer] + ' ' + bashCommandForProcessess + '"'
 
     os.system(fullBashCommand)
 
