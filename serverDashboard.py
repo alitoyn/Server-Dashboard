@@ -20,8 +20,6 @@ else:
     print("Confirm the file 'local_data.py' exists...")
     controlFunctions.exitProgram()
 
-
-
 foldingFunctions.dailyDownloadFoldingUserData(config.foldingUserID)
 
 serverSshConnections = controlFunctions.connectToServers()
