@@ -120,13 +120,39 @@ def checkServerIsLoggedIn(serverSshConnection):
     else:
         return False
 
-def checkAppUpToDate():
-    import os
+def appUpdater():
+    import os, time
+    from Functions import dataFunctions
 
-    udateDataCommand = 'git remote update'
-    checkUpdatesNeededCommand = 'git status -uno'
-    pullUpdates = 'git pull'
+    bashCommandToUpdateRepo = 'git remote update > updateData && git status -uno > updateData'
+    os.system(bashCommandToUpdateRepo)
 
-    attmeptUpdate = os.system(udateDataCommand)
+    response = checkForUpdates()
 
-    return attmeptUpdate
+    if response == True:
+        question = 'There is an update available\nWould you like to apply the update?'
+        allowedResponses = ['Y', 'y', 'N', 'n']
+        answer = dataFunctions.dataValWithQuestion(question, allowedResponses)
+        if answer == 'Y' or answer == 'y':
+
+            os.system('git pull >> updateData')
+
+            print('Restart the program to complete update')
+            time.wait(2)
+    else:
+        print('App up to date.')
+
+
+
+    bashCommandToRemoveDataFile = 'rm updateData'
+    os.system('rm updateData')
+
+def checkForUpdates():
+
+    updatesAvailableResponse = '  (use "git pull" to update your local branch)\n'
+
+    with open('updateData') as f:
+        for line in f:
+            if line == updatesAvailableResponse:
+                return True
+    return False

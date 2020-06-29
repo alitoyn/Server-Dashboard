@@ -18,6 +18,7 @@ else:
     print("Confirm the file 'local_data.py' exists...")
     controlFunctions.exitProgram()
 
+controlFunctions.appUpdater()
 
 foldingFunctions.dailyDownloadFoldingUserData(config.foldingUserID)
 
