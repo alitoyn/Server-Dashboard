@@ -120,3 +120,13 @@ def checkServerIsLoggedIn(serverSshConnection):
     else:
         return False
 
+def checkAppUpToDate():
+    import os
+
+    udateDataCommand = 'git remote update'
+    checkUpdatesNeededCommand = 'git status -uno'
+    pullUpdates = 'git pull'
+
+    attmeptUpdate = os.system(udateDataCommand)
+
+    return attmeptUpdate
