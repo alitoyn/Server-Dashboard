@@ -143,7 +143,6 @@ def appUpdater():
         print('App up to date.')
 
 
-
     bashCommandToRemoveDataFile = 'rm updateData'
     os.system('rm updateData')
 
