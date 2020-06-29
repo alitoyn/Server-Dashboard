@@ -138,7 +138,7 @@ def appUpdater():
             os.system('git pull >> updateData')
 
             print('Restart the program to complete update')
-            time.wait(2)
+            time.sleep(2)
     else:
         print('App up to date.')
 
