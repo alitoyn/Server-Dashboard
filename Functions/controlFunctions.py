@@ -130,14 +130,14 @@ def appUpdater():
     response = checkForUpdates()
 
     if response == True:
-        question = 'There is an update available\nWould you like to apply the update?'
+        question = '\nThere is an update available\nWould you like to apply the update?\n'
         allowedResponses = ['Y', 'y', 'N', 'n']
         answer = dataFunctions.dataValWithQuestion(question, allowedResponses)
         if answer == 'Y' or answer == 'y':
 
             os.system('git pull >> updateData')
 
-            print('Restart the program to complete update')
+            print('Restart the program to complete update\n\n')
             time.sleep(2)
     else:
         print('App up to date.')

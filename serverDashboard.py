@@ -10,6 +10,8 @@ from screens import sendCommandModule
 from screens import newSshWindowModule
 from screens import overviewModule
 
+controlFunctions.appUpdater()
+
 if controlFunctions.checkFileExists('config.py'):
     print("Config file found...")
     import config
@@ -18,7 +20,7 @@ else:
     print("Confirm the file 'local_data.py' exists...")
     controlFunctions.exitProgram()
 
-controlFunctions.appUpdater()
+
 
 foldingFunctions.dailyDownloadFoldingUserData(config.foldingUserID)
 
