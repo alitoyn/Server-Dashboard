@@ -135,7 +135,7 @@ def appUpdater():
         answer = dataFunctions.dataValWithQuestion(question, allowedResponses)
         if answer == 'Y' or answer == 'y':
 
-            os.system('git pull >> updateData')
+            os.system('git pull -q >> updateData')
 
             print('\nRestart the program to complete update\n\n')
             time.sleep(2)
