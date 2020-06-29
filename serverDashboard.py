@@ -1,3 +1,6 @@
+# pip dependancies updated 29th June
+# os pexpect sys time bs4 lxml 
+
 from Functions import controlFunctions
 from Functions import dataFunctions
 from Functions import foldingFunctions
@@ -13,21 +16,18 @@ from screens import overviewModule
 controlFunctions.appUpdater()
 
 if controlFunctions.checkFileExists('config.py'):
-    print("Config file found...")
+    print("Config file found.")
     import config
 else:
     print("No config file found")
-    print("Confirm the file 'local_data.py' exists...")
+    print("Confirm the file 'config.py' exists...")
     controlFunctions.exitProgram()
 
 foldingFunctions.dailyDownloadFoldingUserData(config.foldingUserID)
 
 serverSshConnections = controlFunctions.connectToServers()
 
-defaultTerminalRows = 24
-defaultTerminalColumns = 80
-terminalSize = [defaultTerminalRows, defaultTerminalColumns]
-
+# if these are changed, need to update controlFunctions.createDisplayOptions()
 serverSelectScreen = 's'
 dashboardScreen = 'd'
 foldingScreen = 'f'
@@ -39,7 +39,7 @@ quitProgram = 'q'
 
 listOfScreens = [serverSelectScreen, dashboardScreen, foldingScreen, 
                  sendCommandScreen, newSshWindowScreen, overviewScreen,
-                  launchProcesses, quitProgram ]
+                  launchProcesses, quitProgram]
 
 # set default screen
 selectedScreen = dashboardScreen
@@ -47,7 +47,7 @@ selectedScreen = dashboardScreen
 defaultServerToDisplay = 0
 selectedServer = defaultServerToDisplay
 
-
+# display loop
 while selectedScreen != quitProgram:
 
     skipDisplayOptions = False

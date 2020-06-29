@@ -16,7 +16,7 @@ def dailyDownloadFoldingUserData(id):
 		appendDateToFoldingData('foldingStats.xml')
 
 	else:
-		print("Folding stats up to date")
+		print("Folding stats up to date.")
 
 def wasFoldingDataDownloadedToday(foldingXML):
 	try:
@@ -38,13 +38,12 @@ def appendDateToFoldingData(foldingXML):
 
 def foldingXmlParse():
 	try:
-		# import beautiful soup - for parsing information
 		from bs4 import BeautifulSoup
-		# use BS to parse the data
+
 		with open("foldingStats.xml") as filePointer:
 			data = BeautifulSoup(filePointer, "xml")
-		# pass this data back to the main funciton
 		return data
+	
 	except:		
 		print("Folding Stats data parse failed")
 
