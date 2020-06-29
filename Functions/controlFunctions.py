@@ -11,7 +11,7 @@ def connectToServers():
 
     numberOfServers = len(config.server_name)
 
-    serverSshConnections = {} # this list holds the ssh connections
+    serverSshConnections = {}
 
     print("\nConnect to servers...")
     for i in range(numberOfServers):
@@ -124,7 +124,7 @@ def appUpdater():
     import os, time
     from Functions import dataFunctions
 
-    bashCommandToUpdateRepo = 'git remote update | xargs echo > updateData; git status -uno > updateData'
+    bashCommandToUpdateRepo = 'git remote update > updateData; git status -uno > updateData'
     os.system(bashCommandToUpdateRepo)
 
     response = checkForUpdates()
@@ -137,7 +137,7 @@ def appUpdater():
 
             os.system('git pull >> updateData')
 
-            print('Restart the program to complete update\n\n')
+            print('\nRestart the program to complete update\n\n')
             time.sleep(2)
     else:
         print('App up to date.')

@@ -6,6 +6,7 @@ Utilises ssh keys to connect so no need to store passwords!
 
 **Current Functionality:**
 
+* Check for updates from Github and apply them
 * Server uptime, users logged in, load averages
 * Root storage capacity + an additional storage location
 * F@H user stats and server status
@@ -14,7 +15,7 @@ Utilises ssh keys to connect so no need to store passwords!
 * Open new terminal window with ssh connection to a selected server
 * Setup Program to build config file
 * Send commands to servers
-* Use application to install dependencies on connected servers
+* Install dependencies on connected servers
 * CPU Temp readouts
 
 **Upcoming Functionality:**
@@ -22,5 +23,4 @@ Utilises ssh keys to connect so no need to store passwords!
 * Network and CPU load graphs
 * More details on the F@H stats page
 * Password lock application
-* Check for updates from Github and install
 * Install python dependencies from setup.py
