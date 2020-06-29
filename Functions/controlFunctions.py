@@ -124,7 +124,7 @@ def appUpdater():
     import os, time
     from Functions import dataFunctions
 
-    bashCommandToUpdateRepo = 'git remote update > updateData; git status -uno > updateData'
+    bashCommandToUpdateRepo = 'git remote update | xargs echo > updateData; git status -uno > updateData'
     os.system(bashCommandToUpdateRepo)
 
     response = checkForUpdates()
