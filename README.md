@@ -17,10 +17,10 @@ Utilises ssh keys to connect so no need to store passwords!
 * Send commands to servers
 * Install dependencies on connected servers
 * CPU Temp readouts
+* Install python dependencies from setup.py
 
 **Upcoming Functionality:**
 
 * Network and CPU load graphs
 * More details on the F@H stats page
 * Password lock application
-* Install python dependencies from setup.py

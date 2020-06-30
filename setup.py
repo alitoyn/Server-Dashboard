@@ -1,5 +1,5 @@
 # This file creates the config file for the server-dashboard.py program
-import sys, time
+import sys, time, os
 from Functions import dataFunctions
 from Functions import displayFunctions
 
@@ -9,7 +9,7 @@ try: 				# try to import file
 	file = open("config.py","r")
 	file.close()
 	print("Config file already exists")
-	found = 1	
+	found = 1
 except:				# catch the exception if it does not exisit
 	found = 0
 	print("Config file not found")
@@ -28,6 +28,15 @@ if found == 1:	# if it does exist, primpt the user
 			else:
 				print("Input invalid")
 				time.sleep(0.5)
+
+print('First we need to install some dependencies')
+allowedInputs = ['Y', 'y', 'N', 'n']
+answer = dataFunctions.dataValWithQuestion('Would you like to install these now or manually?', allowedInputs)
+if answer == 'y' or answer == 'Y':
+	os.system('pip3 install os pexpect sys time bs4 lxml')
+else:
+	print('Please run the following command before stating the program:')
+	print('pip3 install os pexpect sys time bs4 lxml')
 
 # open the config file
 file = open("config.py","w")
@@ -96,12 +105,12 @@ while 1:
 	# check response, if the answer is no, then break the loop
 	if response == "N" or response == 'n':
 		break
-	
+
 	# otherwise start taking data
 	else:
 		file.write("\n")
 		file.write(displayFunctions.getScreenDivider("# Data for server[" + str(count) + "]", divider_width))
-		
+
 		# get server name
 		response = input("\nWhat is the name of the server?\n")
 		file.write("server_name[" + str(count) + "] = '" + response + "'\n")
@@ -130,13 +139,13 @@ while 1:
 		else:
 			file.write("additional_storage[" + str(count) + "] = None\n")
 
-		
+
 		# Does the user have any logfiles they want to track
 		response = dataFunctions.dataValWithQuestion("\nDo you have a logfile you want to track? (y/n)\n", allowed_inputs)
-		
+
 		if response == 'y' or response == 'Y':
 			logfile_count = 0
-			
+
 			while 1:
 				if logfile_count != 0:
 					response = dataFunctions.dataValWithQuestion("\nWould you like to add another logfile? (y/n)\n", allowed_inputs)
@@ -154,7 +163,7 @@ while 1:
 
 				logfile_count += 1
 
-		
+
 		count += 1
 
 file.write("\n")
@@ -177,4 +186,4 @@ file.write("default_terminal = '" + response + "'\n")
 
 file.close()
 
-print("Setup Successful")  
+print("Setup Successful")

@@ -1,5 +1,5 @@
-# pip dependancies updated 29th June
-# os pexpect sys time bs4 lxml 
+# pip dependencies updated 29th June
+# os pexpect sys time bs4 lxml
 
 from Functions import controlFunctions
 from Functions import dataFunctions
@@ -37,7 +37,7 @@ overviewScreen = 'o'
 launchProcesses = '0'
 quitProgram = 'q'
 
-listOfScreens = [serverSelectScreen, dashboardScreen, foldingScreen, 
+listOfScreens = [serverSelectScreen, dashboardScreen, foldingScreen,
                  sendCommandScreen, newSshWindowScreen, overviewScreen,
                   launchProcesses, quitProgram]
 
@@ -51,16 +51,16 @@ selectedServer = defaultServerToDisplay
 while selectedScreen != quitProgram:
 
     skipDisplayOptions = False
-   
+
     if selectedScreen == dashboardScreen:
             if controlFunctions.checkServerIsLoggedIn(serverSshConnections[selectedServer]):
                 dashboardModule.displayDashboard(serverSshConnections[selectedServer], selectedServer)
             else:
                 displayFunctions.printServerNotLoggedIn(selectedServer)
-        
+
     elif selectedScreen == serverSelectScreen:
         selectedServer = selectServerModule.userSelectServer()
-        
+
         selectedScreen = dashboardScreen
         skipDisplayOptions = True
 
@@ -84,13 +84,12 @@ while selectedScreen != quitProgram:
 
     if not skipDisplayOptions:
         print(controlFunctions.createDisplayOptions(selectedScreen))
-        
+
         userInput = dataFunctions.checkInputAgainstList_char(listOfScreens)
-    
+
         if userInput == '0':
             controlFunctions.launchProcessesView(serverSshConnections[selectedServer], selectedServer)
         else:
             selectedScreen = userInput
 
 controlFunctions.logoutOfAllServers(serverSshConnections)
-
