@@ -9,6 +9,9 @@ COPY requirements.txt .
 
 # install dependencies
 RUN pip install -r requirements.txt
+RUN apt-get update
+RUN apt-get install -y wget
+RUN apt-get install -y tmux
 
 # command to run on container start
 CMD [ "python", "./serverDashboard.py" ] 

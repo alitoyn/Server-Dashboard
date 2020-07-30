@@ -65,8 +65,8 @@ while selectedScreen != quitProgram:
         selectedScreen = dashboardScreen
         skipDisplayOptions = True
 
-    elif selectedScreen == foldingScreen:
-        foldingScreenModule.displayFoldingScreen(serverSshConnections)
+    # elif selectedScreen == foldingScreen:
+    #     foldingScreenModule.displayFoldingScreen(serverSshConnections)
 
     elif selectedScreen == sendCommandScreen:
         sendCommandModule.getCommandAndSend()
