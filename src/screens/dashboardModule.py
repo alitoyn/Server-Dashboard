@@ -11,7 +11,7 @@ def displayDashboard(sshConnection, selectedServer):
 	additionalStorage = dataFunctions.getAdditionalStorage(config.additional_storage[selectedServer], sshConnection)
 
 	updates = dataFunctions.getUpdateData(sshConnection)
-	
+
 	displayFunctions.clearTerminal()
 
 	print('Server Information: ' + config.server_name[selectedServer])
@@ -22,15 +22,15 @@ def displayDashboard(sshConnection, selectedServer):
 	serverTempInfo = dataFunctions.getTempInfo(sshConnection)
 	print('Package temperature:')
 	print(serverTempInfo)
-	
+
 	print('Storage:')
 	displayFunctions.printStorageData(rootStorage, additionalStorage)
 
-	print('Update Data:\n ' + updates)    
+	print('Update Data:\n ' + updates)
 
 	foldingLogData = foldingFunctions.getFoldingLogData(sshConnection)
 	printFoldingData(foldingLogData)
-		
+
 	numberOfLogFiles = getNumberOfLogFiles(config.extra_logfile_name[selectedServer])
 
 	if numberOfLogFiles != 0:

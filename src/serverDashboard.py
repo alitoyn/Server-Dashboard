@@ -13,7 +13,7 @@ from screens import sendCommandModule
 from screens import newSshWindowModule
 from screens import overviewModule
 
-controlFunctions.appUpdater()
+# controlFunctions.appUpdater()
 
 if controlFunctions.checkFileExists('config.py'):
     print("Config file found.")

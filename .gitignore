@@ -2,6 +2,7 @@
 local_data.py 
 config.py
 test.py
+data/
 
 #folding data file
 folding.xml

@@ -1,0 +1,4 @@
+sudo docker run \
+	-v "$PWD"/src:/code/src \
+	-p 22:22 \
+	serverdash
