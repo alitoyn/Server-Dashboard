@@ -13,6 +13,7 @@ from screens import sendCommandModule
 from screens import newSshWindowModule
 from screens import overviewModule
 
+# need to make this work inside a docker container
 # controlFunctions.appUpdater()
 
 if controlFunctions.checkFileExists('config.py'):
